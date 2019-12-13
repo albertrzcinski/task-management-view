@@ -1,26 +1,59 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, {Component} from 'react';
+import LoginPage from "./pages/LoginPage";
+import SignUpPage from "./pages/SignUpPage";
+import RecoveryPage from "./pages/RecoveryPage";
+import {Route, BrowserRouter as Router, Redirect} from "react-router-dom";
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+export const LoginContext = React.createContext({
+    loggedIn: false
+});
+
+class App extends Component{
+    handleLogout = () => {
+        localStorage.removeItem('username');
+        this.setState({
+            loggedIn: false
+            //user: {}
+    });
+    };
+
+    handleLogin = (username) => {
+        localStorage.setItem('username', `${username}`);
+        this.setState({
+            loggedIn: true
+            //user: data.user
+        });
+    };
+
+    state = {
+        loggedIn: localStorage.getItem('username') != null,
+        handleLogin: this.handleLogin,
+        handleLogout: this.handleLogout
+    };
+
+  render() {
+      const {Provider} = LoginContext;
+
+      return (
+      <>
+
+          <Provider value={this.state}>
+          <Router>
+              <Route path="/signUp" component={SignUpPage}/>
+              <Route path="/login">
+                  <LoginPage
+                      //handleLogin={this.handleLogin}
+                  />
+              </Route>
+              <Route path="/recovery" component={RecoveryPage} />
+              <Route exact path="/">
+                  {this.state.loggedIn ? <Redirect to="/dashboard"/> : <Redirect to="/login"/>}
+              </Route>
+          </Router>
+          </Provider>
+      </>
+      )
+  }
 }
 
 export default App;
