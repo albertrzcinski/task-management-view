@@ -6,6 +6,9 @@ import Button from "../components/Button";
 import LoginLayout from "../layout/LoginLayout";
 import logo from "../logo.svg";
 import styled from "styled-components";
+import axios from "axios";
+import {displayNotification} from "../utils/utils";
+import ReactNoticifaction from "react-notifications-component";
 
 const ButtonWrapper = styled.div`
   margin-top: 20px;
@@ -23,7 +26,32 @@ const validationSchema = yup.object().shape({
         .required("This field is required")
 });
 
+const sendLink = (value, setSubmitting, resetForm) => {
+    //TODO change this post to right
+    axios.post('some url to recovery', {
+        email: value.email
+    })
+        .then(res => {
+            if(res.status === 200) {
+                displayNotification("Recovery link was sent. Check your email inbox.", "success");
+                resetForm();
+                setSubmitting(false);
+            }
+        })
+        .catch(err => {
+            if(!err.response) {
+                displayNotification("Server is not responding. Try again later.", "danger");
+                setSubmitting(false);
+            } else {
+                displayNotification("Account with this email address doesn't exist.", "warning");
+                setSubmitting(false);
+            }
+        });
+};
+
 const RecoveryPage = () => (
+    <>
+    <ReactNoticifaction />
     <LoginLayout>
         <Img src={logo} alt="Logo"/>
 
@@ -39,9 +67,7 @@ const RecoveryPage = () => (
             validationSchema={validationSchema}
             onSubmit={(values, {setSubmitting, resetForm}) => {
                 setSubmitting(true);
-                alert(values.email);
-                resetForm();
-                setSubmitting(false);
+                sendLink(values, setSubmitting, resetForm);
             }}
         >
             {({isSubmitting}) => (
@@ -66,6 +92,7 @@ const RecoveryPage = () => (
 
         <StyledLink to="/login">Return to log in</StyledLink>
     </LoginLayout>
+    </>
 );
 
 export default RecoveryPage;
