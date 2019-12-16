@@ -4,6 +4,7 @@ import LoginLayout from "../layout/LoginLayout";
 import {Redirect} from "react-router";
 import {userAll} from "../utils/utils";
 import axios from "axios";
+import TaskCard from "../components/TaskCard";
 
 const getUsers = async (props) => {
     await axios.get(userAll,
@@ -34,6 +35,11 @@ const Dashboard = (props) => {
                   </Button>
 
                   <br />
+
+                  <TaskCard/>
+                  <TaskCard withDescription/>
+                  <TaskCard/>
+
 
                 <Button onClick={props.handleLogout}>
                     Logout
