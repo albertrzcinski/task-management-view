@@ -1,8 +1,9 @@
 import React from 'react';
-import styled from 'styled-components';
+import styled, {css} from 'styled-components';
 import Tag from "./Tag";
 import CardTitle from "./CardTitle";
 import {IoMdCheckmarkCircleOutline} from "react-icons/io"
+import {FaTrashAlt} from "react-icons/fa"
 
 const TaskWrapper = styled.div`
   margin: 20px 0 20px 0;
@@ -41,41 +42,54 @@ const Description = styled.div`
   font-family: "Myanmar Text",serif;
 `;
 
-const StyledCheckMark = styled(IoMdCheckmarkCircleOutline)`
+const sharedCss = css`
   padding: 5px 5px 5px 5px;
-  height: 1.8em;
-  width: 1.8em;
-  opacity: 40%;
+  height: 1.9em;
+  width: 1.9em;
+  opacity: 50%;
+  color: ${({theme}) => theme.color.lightblue}
   
   :hover {
     opacity: 100%;
   }
 `;
 
-const text = 'It is a long established fact that a reader will be distracted by the readable content of a page.';
-const text2 = 'It is a long established fact that a reader will be distracted.';
+const StyledCheckMark = styled(IoMdCheckmarkCircleOutline)`
+  ${sharedCss}
+`;
+
+const StyledFaTrashAlt = styled(FaTrashAlt)`
+  ${sharedCss}
+`;
 
 const TaskCard = (props) => {
+    const {desc, trash, title, dueDate, tags} = props;
+
     return (
             <>
                     <TaskWrapper>
                         <TopWrapper>
                             <TagWrapper>
-                                <Tag/>
-                                <Tag/>
+                                {tags.map((tag) => (
+                                    <Tag key={tag.id} name={tag.name}/>
+                                ))}
                             </TagWrapper>
-                            <StyledCheckMark/>
+                            {trash ? <StyledFaTrashAlt/> : <StyledCheckMark/>}
                         </TopWrapper>
 
-                        <CardTitle/>
+                        <CardTitle
+                            title={title}
+                            dueDate={dueDate}
+                        />
 
-                        {props.withDescription ?
+                        {desc &&
                             <Description>
                                 <span>
-                                    {text.length>85 ? text.slice(0,85) + ' ...' : text2.slice(0,90) + ''}
+                                    {desc.length>85 ?
+                                        desc.slice(0,85) + ' ...'
+                                        : desc.slice(0,90) + ''}
                                 </span>
                             </Description>
-                            : null
                         }
 
                         <Footer/>

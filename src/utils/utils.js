@@ -1,12 +1,13 @@
 import axios from "axios";
-import {store} from "react-notifications-component";
+import {store} from 'react-notifications-component';
 
-const url = `http://localhost:8080/`;
-export const loginUrl = url+`login`;
-export const signUpUrl = url+`users/create`;
-export const me = `chyba nie trzeba`;
+const URL = `http://localhost:8080/`;
+export const LOGIN_URL = URL+`login`;
+export const SIGN_UP_URL = URL+`users/create`;
+export const CURRENT_USER_URL = URL+`users/me`;
+export const TASKS_BY_OWNER_URL = URL+`tasks/allByOwner`;
 
-export const userAll = url+`users/all`;
+// export const ALL_USERS_URL = URL+`users/all`;
 
 export const displayNotification = (message, type) => {
     store.addNotification({
@@ -24,7 +25,7 @@ export const displayNotification = (message, type) => {
 
 
 export const createUser = (values, props, setSubmitting, resetForm) => {
-    axios.post(signUpUrl,{
+    axios.post(SIGN_UP_URL,{
         email: values.email,
         username: values.username,
         password: values.password
@@ -36,7 +37,7 @@ export const createUser = (values, props, setSubmitting, resetForm) => {
                 setTimeout(() => {
                     setSubmitting(false);
                     props.history.push("/")
-                },3000);
+                },2000);
 
             }
         })

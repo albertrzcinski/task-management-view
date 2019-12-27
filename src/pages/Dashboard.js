@@ -1,55 +1,123 @@
-import React from "react";
-import Button from "../components/Button";
-import LoginLayout from "../layout/LoginLayout";
+import React, {Component} from "react";
 import {Redirect} from "react-router";
-import {userAll} from "../utils/utils";
+import styled from "styled-components";
+import DashboardLayout from "../layout/DashboardLayout";
+import Tasks from "./Tasks";
+import NavBar from "../components/NavBar";
 import axios from "axios";
-import TaskCard from "../components/TaskCard";
+import {displayNotification, CURRENT_USER_URL} from "../utils/utils";
+import SideBar from "./SideBar";
 
-const getUsers = async (props) => {
-    await axios.get(userAll,
-        {
+const DashboardWrapper = styled.div`
+  height: auto;
+  min-height: calc(100vh - 70px);
+  width: 100vw;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-color: ${({theme}) => theme.color.background};
+  border-top-left-radius: 15px;
+  border-top-right-radius: 15px;
+
+`;
+
+class Dashboard extends Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            user: {
+                id: 0,
+                email: '',
+                username: localStorage.getItem('username'),
+                firstName: '',
+                lastName: '',
+                timeZone: '',
+                photo: ''
+            },
+            showSideBar: false
+        }
+    }
+
+    componentDidMount() {
+        this.handleGetUser();
+    }
+
+    handleGetUser = () => {
+        axios.get(CURRENT_USER_URL, {
+            params: {
+                username: localStorage.getItem('username')
+            },
             headers: {
                 "Content-Type": 'application/json',
                 "Authorization": localStorage.getItem('token')
             }
         })
-        .then(res => {
-            console.log(res);
-            console.log(res.data);
-        })
-        .catch(props.handleLogout);
-};
+            .then(res => {
+                const {id, email, firstName, lastName, timeZone, photo} = res.data;
 
-const Dashboard = (props) => {
-  return (
-      <>
-          {props.loggedIn ?
-              <LoginLayout>
-                <h2>
-                    Hello {localStorage.getItem('username')}
-                </h2>
+                if(res.status === 200) {
+                    this.setState({
+                        user: {
+                            ...this.state.user,
+                            id: id,
+                            email: email,
+                            firstName: firstName,
+                            lastName: lastName,
+                            timeZone: timeZone,
+                            photo: photo
+                        }
+                    });
+                }
+            })
+            .catch(err => {
+                    if (!err.response) {
+                        // connection refused
+                        // this.errorStatus = 'Network Error';
+                        displayNotification("Server is not responding. Try again later.", "danger");
+                    } else {
+                        // 403
+                        // this.errorStatus = err.response.status;
+                        // displayNotification("Invalid username or password", "warning");
+                        this.props.handleLogout();
+                    }
 
-                  <Button isWhite onClick={() => getUsers(props)}>
-                      Show users
-                  </Button>
+                }
+            );
+    };
 
-                  <br />
+    displaySideBar = () => {
+        this.setState(prevState => ({
+            showSideBar: !prevState.showSideBar
+        }))
+    };
 
-                  <TaskCard/>
-                  <TaskCard withDescription/>
-                  <TaskCard/>
+    render() {
+        return (
+            <>
+                {this.props.loggedIn ?
+                    <DashboardLayout>
+
+                        <NavBar displaySideBar={this.displaySideBar}/>
 
 
-                <Button onClick={props.handleLogout}>
-                    Logout
-                </Button>
-              </LoginLayout>
-              :
-              <Redirect to="/login" />
-          }
-      </>
-  );
-};
+                        <DashboardWrapper>
+                            <Tasks
+                                userId={this.state.user.id}
+                                handleLogout={this.props.handleLogout}
+                            />
+                        </DashboardWrapper>
+
+                        {this.state.showSideBar &&
+                            <SideBar />
+                        }
+
+                    </DashboardLayout>
+                    :
+                    <Redirect to="/login" />
+                }
+            </>
+        );
+    }
+}
 
 export default Dashboard;

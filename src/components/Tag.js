@@ -16,10 +16,10 @@ const P = styled.p`
   font-size: .55em;
 `;
 
-const Tag = () => {
+const Tag = (props) => {
     return (
         <StyledWrapper>
-            <P>Developing</P>
+            <P>{props.name}</P>
         </StyledWrapper>
     );
 };

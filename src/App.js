@@ -5,7 +5,7 @@ import RecoveryPage from "./pages/RecoveryPage";
 import {BrowserRouter as Router} from "react-router-dom";
 import {Route, Redirect} from "react-router"
 import axios from "axios";
-import {displayNotification, loginUrl} from "./utils/utils";
+import {displayNotification, LOGIN_URL} from "./utils/utils";
 import Dashboard from "./pages/Dashboard";
 import TaskCard from "./components/TaskCard";
 
@@ -19,7 +19,7 @@ class App extends Component{
     };
 
     handleLogin = async (credentials, setSubmitting) => {
-        await axios.post(loginUrl, {
+        await axios.post(LOGIN_URL, {
             username: credentials.username,
             password: credentials.password
         })

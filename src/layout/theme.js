@@ -6,14 +6,17 @@ export const theme = {
     color: {
         green: 'rgba(48,167,26,0.91)',
         blue: '#6684EC',
-        lightblue: '#86a8e4',
+        brighterBlue: '#b7d4ff',//'#86a8e4',
+        lightblue: '#93B5EF',//'#86a8e4',
         background: '#F7FAFF',//'#211a0f'
         white: "#fdfdfd",
         text: '#7D7D7D',
         border: "#b3b3b3",
         red: "#8d1e1b",
         pink: "#ffe3f1",
-        darkPink: "#f3a2cd"
+        darkPink: "#f3a2cd",
+        search: "rgba(168, 190, 255, 0.4)",
+        midnightblue: 'midnightblue'
     },
     media: {
         desktop: '@media (min-width: 1024px)',

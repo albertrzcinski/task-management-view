@@ -18,7 +18,7 @@ const IconWrapper = styled.div`
    align-items: center;
    justify-content: space-between;
    font-size: .6em;
-   margin-top: 5px;
+   margin-top: 10px;
    opacity: 60%;
 `;
 
@@ -26,11 +26,13 @@ const StyledFaCommentAlt = styled(FaCommentAlt)`
   margin-right: 3px;
 `;
 
-const CardTitle = () => {
+const CardTitle = (props) => {
+    const date = new Date(props.dueDate).toDateString();
+
   return (
       <>
           <StyledWrapper>
-              <P>Mariyuk admin CMS</P>
+              <P>{props.title}</P>
 
               <IconWrapper>
                   <div>
@@ -38,7 +40,7 @@ const CardTitle = () => {
                   </div>
                   <div>
                       <FiClock />
-                      <span> 21 Nov 2019 </span>
+                      <span> {date} </span>
                   </div>
               </IconWrapper>
           </StyledWrapper>
