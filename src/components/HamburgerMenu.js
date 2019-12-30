@@ -73,7 +73,7 @@ class HamburgerMenu extends Component{
 
     render() {
         return(
-            <Hamburger onClick={this.toggle}>
+            <Hamburger>
                 <Line1 pose={this.state.isOpen ? 'open' : 'closed'}/>
                 <Line2 pose={this.state.isOpen ? 'open' : 'closed'}/>
                 <Line3 pose={this.state.isOpen ? 'open' : 'closed'}/>

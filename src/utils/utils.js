@@ -6,6 +6,10 @@ export const LOGIN_URL = URL+`login`;
 export const SIGN_UP_URL = URL+`users/create`;
 export const CURRENT_USER_URL = URL+`users/me`;
 export const TASKS_BY_OWNER_URL = URL+`tasks/allByOwner`;
+export const TASKS_BY_MEMBER_URL = URL+`tasks/allByMember`;
+export const SAVE_TASK = URL+`tasks/save`;
+export const COMPLETE_TASK = URL+`tasks/complete`;
+export const DELETE_TASK = URL+`tasks/delete`;
 
 // export const ALL_USERS_URL = URL+`users/all`;
 
@@ -18,7 +22,7 @@ export const displayNotification = (message, type) => {
         animationIn: ["animated", "fadeIn"],
         animationOut: ["animated", "fadeOut"],
         dismiss: {
-            duration: 7000
+            duration: 5000
         }
     });
 };

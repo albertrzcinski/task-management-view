@@ -31,7 +31,7 @@ const SideBarFooterWithRef = React.forwardRef((props, ref) => {
    return (
        <Wrapper {...props} ref={ref}>
            <StyledMdSettings/>
-           <StyledMdExitToApp/>
+           <StyledMdExitToApp onClick={props.handleLogout}/>
        </Wrapper>
    )
 });

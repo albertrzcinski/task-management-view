@@ -29,13 +29,15 @@ const StyledInput = styled.input`
    }
 `;
 
-const SearchBar = () => {
+const SearchBar = (props) => {
     return (
         <SearchWrapper>
             <FiSearch />
             <StyledInput
-                type="text"
+                type="search"
                 placeholder="Search here..."
+                onInput={(e) => props.search(e.target.value)}
+                onFocus={(e) => props.search(e.target.value)}
             />
         </SearchWrapper>
     );

@@ -4,6 +4,7 @@ import Tag from "./Tag";
 import CardTitle from "./CardTitle";
 import {IoMdCheckmarkCircleOutline} from "react-icons/io"
 import {FaTrashAlt} from "react-icons/fa"
+import {MdSettingsBackupRestore} from "react-icons/md"
 
 const TaskWrapper = styled.div`
   margin: 20px 0 20px 0;
@@ -62,8 +63,12 @@ const StyledFaTrashAlt = styled(FaTrashAlt)`
   ${sharedCss}
 `;
 
+const StyledMdSettingsBackupRestore = styled(MdSettingsBackupRestore)`
+  ${sharedCss}
+`;
+
 const TaskCard = (props) => {
-    const {desc, trash, title, dueDate, tags} = props;
+    const {id, desc, trash, complete, title, dueDate, tags, handleComplete, handleDelete} = props;
 
     return (
             <>
@@ -74,12 +79,27 @@ const TaskCard = (props) => {
                                     <Tag key={tag.id} name={tag.name}/>
                                 ))}
                             </TagWrapper>
-                            {trash ? <StyledFaTrashAlt/> : <StyledCheckMark/>}
+                            {trash && tags.length ?
+                                <span>
+                                    <StyledMdSettingsBackupRestore onClick={() => handleComplete(id)}/>
+                                    <StyledFaTrashAlt onClick={() => handleDelete(id)}/>
+                                </span>
+                                :null
+                            }
+                            {complete && tags.length ?
+                                <StyledCheckMark onClick={() => handleComplete(id)}/>
+                                : null
+                            }
                         </TopWrapper>
 
                         <CardTitle
                             title={title}
                             dueDate={dueDate}
+                            tags={tags}
+                            complete={complete}
+                            trash={trash}
+                            handleComplete={handleComplete}
+                            id={id}
                         />
 
                         {desc &&

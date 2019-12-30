@@ -1,4 +1,4 @@
-import React from "react";
+import React, {Component} from "react";
 import styled from "styled-components";
 import SearchBar from "./SearchBar";
 import {MdAddCircle} from "react-icons/md"
@@ -17,24 +17,32 @@ const CircleButton = styled.button`
   background: none;
   border: none;
   padding: 3px;
+  
+  :focus{
+    outline: none;
+  }
 `;
 
 const StyledMdAddCircle = styled(MdAddCircle)`
   height: 2.6em;
   width: 2.6em;
   color: #b0caff;
-  cursor:pointer;
+  cursor: pointer;
 `;
 
-const NavBar = (props) => {
-    // render() {
+class NavBar extends Component {
+    childToggle = () =>{
+        this.child.toggle();
+    };
+
+    render() {
         return (
             <NavBarWrapper>
-                <div onClick={props.displaySideBar}>
-                    <HamburgerMenu />
+                <div onClick={this.props.displaySideBar}>
+                    <HamburgerMenu ref={instance => {this.child = instance}}/>
                 </div>
 
-                <SearchBar/>
+                <SearchBar search={this.props.search} />
 
                 <CircleButton>
                     <StyledMdAddCircle/>
@@ -45,7 +53,7 @@ const NavBar = (props) => {
                 {/*</h2>*/}
             </NavBarWrapper>
         );
-    // }
+    }
 };
 
 export default NavBar;

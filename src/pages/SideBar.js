@@ -104,6 +104,7 @@ class SideBar extends Component {
         isOpen: false
     };
 
+
     componentDidMount() {
         this.setState({ isOpen: !this.state.isOpen });
     }
@@ -118,17 +119,49 @@ class SideBar extends Component {
                   <PosedPhoto/>
 
                   <UL>
-                      <PosedLI> All tasks </PosedLI>
-                      <PosedLI>Today</PosedLI>
-                      <PosedLI>Tomorrow</PosedLI>
+                      <PosedLI onClick={() => {
+                          this.props.click("All task");
+                          this.props.displaySideBar();
+                      }}>
+                          All tasks
+                      </PosedLI>
+
+                      <PosedLI onClick={() => {
+                          this.props.click("Today");
+                          this.props.displaySideBar();
+                      }}>
+                          Today
+                      </PosedLI>
+
+                      <PosedLI onClick={() => {
+                          this.props.click("Tomorrow");
+                          this.props.displaySideBar();
+                      }}>
+                          Tomorrow
+                      </PosedLI>
+
                       <PosedLI>Go to date</PosedLI>
+
                       <PosedLI>Collections</PosedLI>
-                      <PosedLI>Shared with Me</PosedLI>
+
+                      <PosedLI onClick={() => {
+                          this.props.click("Shared");
+                          this.props.displaySideBar();
+                      }}>
+                          Shared with Me
+                      </PosedLI>
+
                       <PosedLI>Tags</PosedLI>
-                      <PosedLI>Complete</PosedLI>
+
+                      <PosedLI onClick={() => {
+                          this.props.click("Complete");
+                          this.props.displaySideBar();
+                      }}>
+                          Complete
+                      </PosedLI>
                   </UL>
 
-                  <Footer/>
+                  <Footer handleLogout={this.props.handleLogout}/>
 
               </ListWrapper>
           </PosedSideBar>
