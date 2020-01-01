@@ -38,6 +38,7 @@ export const FormikField = styled(Field)`
   :focus {
     opacity: 75%;
     border-color: ${({theme}) => theme.color.blue};;
+    outline: none;
   }
 `;
 

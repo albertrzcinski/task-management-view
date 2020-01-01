@@ -35,6 +35,7 @@ const Button = styled.button`
    
    :hover, :focus  {
     opacity: 100%;
+    outline: none;
    }
 `;
 

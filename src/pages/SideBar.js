@@ -1,8 +1,7 @@
 import React, {Component} from "react";
-import styled from "styled-components";
+import styled, {css} from "styled-components";
 import posed from "react-pose";
 import SideBarFooterWithRef from "../components/SideBarFooterWithRef";
-import photo from "../utils/img.jpg";
 
 const MenuWrapper = styled.nav`
   position: fixed;
@@ -26,14 +25,20 @@ const PosedSideBar = posed(MenuWrapper)({
     }
 });
 
-const Photo = styled.div`
+const Photo = styled.img`
   border-radius: 50px;
   border: 1px solid ${({theme}) => theme.color.brighterBlue};
-  background: url(${photo});
   background-size: contain;
-  margin-top: 20px;
+  margin: 20px 0 1.5em 0;
   width: 55px;
   height: 55px;
+  
+  ${({blank}) =>
+    blank &&
+    css`
+       border: none;
+       margin-bottom: 0;
+    `};
 `;
 
 const PosedPhoto = posed(Photo)({
@@ -61,7 +66,7 @@ const UL = styled.ul`
   list-style: none;
   color: ${({theme}) => theme.color.brighterBlue};
   font-size: 1.4rem;
-  margin: 1.5em 0 0 0;
+  margin: 0 0 0 0;
   padding: 0;
   cursor: pointer;
 `;
@@ -111,31 +116,37 @@ class SideBar extends Component {
 
     render() {
         const {isOpen} = this.state;
+        const {click, displaySideBar, handleLogout, displayAccount, photo} = this.props;
+        const photoSrc = photo ? `data:image/*.*;base64,${photo}` : 'data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs%3D';
 
         return (
           <PosedSideBar pose={isOpen ? 'visible' : 'hidden'}>
               <ListWrapper>
 
-                  <PosedPhoto/>
+                  {photo ?
+                      <PosedPhoto src={photoSrc}/>
+                      :
+                      <PosedPhoto src={photoSrc} blank/>
+                  }
 
                   <UL>
                       <PosedLI onClick={() => {
-                          this.props.click("All task");
-                          this.props.displaySideBar();
+                          click("All task");
+                          displaySideBar();
                       }}>
                           All tasks
                       </PosedLI>
 
                       <PosedLI onClick={() => {
-                          this.props.click("Today");
-                          this.props.displaySideBar();
+                          click("Today");
+                          displaySideBar();
                       }}>
                           Today
                       </PosedLI>
 
                       <PosedLI onClick={() => {
-                          this.props.click("Tomorrow");
-                          this.props.displaySideBar();
+                          click("Tomorrow");
+                          displaySideBar();
                       }}>
                           Tomorrow
                       </PosedLI>
@@ -145,8 +156,8 @@ class SideBar extends Component {
                       <PosedLI>Collections</PosedLI>
 
                       <PosedLI onClick={() => {
-                          this.props.click("Shared");
-                          this.props.displaySideBar();
+                          click("Shared");
+                          displaySideBar();
                       }}>
                           Shared with Me
                       </PosedLI>
@@ -154,14 +165,18 @@ class SideBar extends Component {
                       <PosedLI>Tags</PosedLI>
 
                       <PosedLI onClick={() => {
-                          this.props.click("Complete");
-                          this.props.displaySideBar();
+                          click("Complete");
+                          displaySideBar();
                       }}>
                           Complete
                       </PosedLI>
                   </UL>
 
-                  <Footer handleLogout={this.props.handleLogout}/>
+                  <Footer
+                      handleLogout={handleLogout}
+                      displayAccount={displayAccount}
+                      onClick={() => displaySideBar()}
+                  />
 
               </ListWrapper>
           </PosedSideBar>

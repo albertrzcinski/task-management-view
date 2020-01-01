@@ -10,6 +10,8 @@ export const TASKS_BY_MEMBER_URL = URL+`tasks/allByMember`;
 export const SAVE_TASK = URL+`tasks/save`;
 export const COMPLETE_TASK = URL+`tasks/complete`;
 export const DELETE_TASK = URL+`tasks/delete`;
+export const SAVE_USER = URL+`users/save`;
+export const CHANGE_USER_PASS = URL+`users/changePass`;
 
 // export const ALL_USERS_URL = URL+`users/all`;
 

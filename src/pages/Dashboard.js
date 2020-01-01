@@ -8,6 +8,7 @@ import axios from "axios";
 import {displayNotification, CURRENT_USER_URL} from "../utils/utils";
 import SideBar from "./SideBar";
 import ReactNoticifaction from "react-notifications-component";
+import Account from "./Account";
 
 const DashboardWrapper = styled.div`
   height: auto;
@@ -32,24 +33,25 @@ class Dashboard extends Component {
                 username: localStorage.getItem('username'),
                 firstName: '',
                 lastName: '',
-                timeZone: '',
-                photo: ''
+                photo: null
             },
+            showTasks: true,
             showSideBar: false,
             menuOption: 'All task',
-            text: ''
+            text: '',
+            showAccount: false
         }
     }
 
     componentDidMount() {
-        this.handleGetUser();
+        this.handleGetUser().then();
         this.setState({
             textIsEmpty: this.state.text === ''
         })
     }
 
-    handleGetUser = () => {
-        axios.get(CURRENT_USER_URL, {
+    handleGetUser = async () => {
+       await axios.get(CURRENT_USER_URL, {
             params: {
                 username: localStorage.getItem('username')
             },
@@ -59,17 +61,16 @@ class Dashboard extends Component {
             }
         })
             .then(res => {
-                const {id, email, firstName, lastName, timeZone, photo} = res.data;
+                const {id, username, email, firstName, lastName, photo} = res.data;
 
                 if(res.status === 200) {
                     this.setState({
                         user: {
-                            ...this.state.user,
                             id: id,
+                            username: username,
                             email: email,
                             firstName: firstName,
                             lastName: lastName,
-                            timeZone: timeZone,
                             photo: photo
                         }
                     });
@@ -100,18 +101,33 @@ class Dashboard extends Component {
     };
 
     handleMenuClick = (prop) => {
-        this.setState({menuOption: prop})
+        this.state.showAccount && this.setState({showAccount: false});
+        this.setState({menuOption: prop});
     };
 
     handleSearchTextChange = (prop) => {
         this.setState({text: prop})
     };
 
+
+    displayAccount = () => {
+        this.state.showTasks && this.setState({showTasks: false});
+        this.setState({showAccount: true});
+    };
+
+    closeAccount = () => {
+        !this.state.showTasks && this.setState({showTasks: true});
+        this.setState({showAccount: false});
+    };
+
     render() {
+        const {user, menuOption, text, showSideBar, showAccount, showTasks} = this.state;
+        const {loggedIn, handleLogout} = this.props;
+
         return (
             <>
                 <ReactNoticifaction />
-                {this.props.loggedIn ?
+                {loggedIn ?
                     <DashboardLayout>
 
                         <NavBar
@@ -122,19 +138,29 @@ class Dashboard extends Component {
 
 
                         <DashboardWrapper>
-                            <Tasks
-                                userId={this.state.user.id}
-                                menuOption={this.state.menuOption}
-                                text={this.state.text}
-                                handleLogout={this.props.handleLogout}
-                            />
+                            {showTasks &&
+                                <Tasks
+                                    userId={user.id}
+                                    menuOption={menuOption}
+                                    text={text}
+                                    handleLogout={handleLogout}
+                                />}
+                            {showAccount &&
+                                <Account
+                                    user={user}
+                                    closeAccount={this.closeAccount}
+                                    handleLogout={handleLogout}
+                                    handleGetUser={this.handleGetUser}
+                                />}
                         </DashboardWrapper>
 
-                        {this.state.showSideBar &&
+                        {showSideBar &&
                             <SideBar
                                 click={this.handleMenuClick}
                                 displaySideBar={this.displaySideBar}
-                                handleLogout={this.props.handleLogout}
+                                handleLogout={handleLogout}
+                                displayAccount={this.displayAccount}
+                                photo={user.photo}
                             />
                         }
 

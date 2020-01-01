@@ -30,7 +30,7 @@ const Wrapper = styled.div`
 const SideBarFooterWithRef = React.forwardRef((props, ref) => {
    return (
        <Wrapper {...props} ref={ref}>
-           <StyledMdSettings/>
+           <StyledMdSettings onClick={props.displayAccount}/>
            <StyledMdExitToApp onClick={props.handleLogout}/>
        </Wrapper>
    )
