@@ -27,10 +27,9 @@ const Account = (props) => {
             .then(() => {
                 displayNotification("Account successfully updated.", "success");
                 setSubmitting(false);
+                props.handleGetUser();
             })
             .catch(handleLogout);
-
-        props.handleGetUser();
     };
 
 

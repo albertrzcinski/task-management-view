@@ -32,6 +32,12 @@ const Button = styled.button`
         opacity: 85%;
       }
     `};
+    
+    ${({isRed}) =>
+    isRed &&
+    css`
+      background: ${({theme}) => theme.color.red};
+    `};
    
    :hover, :focus  {
     opacity: 100%;

@@ -131,7 +131,15 @@ class Tasks extends Component {
                     this.toggleNumeric();
                 }
             })
-            .catch(this.props.handleLogout)
+            .catch((err) => {
+                if (!err.response) {
+                    // connection refused
+                    displayNotification("Server is not responding. Try again later.", "danger");
+                } else {
+                    // 403
+                    this.props.handleLogout();
+                }
+            });
     };
 
     handleComplete = (id) => {
@@ -192,6 +200,8 @@ class Tasks extends Component {
     render() {
         const {menuOption, text} = this.props;
         const {tasks, sharedTasks} = this.state;
+
+        //tasks.map(({setOfTasks}) => (console.log(setOfTasks.name)));
 
         return (
             <>
@@ -276,7 +286,15 @@ class Tasks extends Component {
         );
 
         function whichTask(t) {
-            const {dueDate, complete} = t;
+            const {dueDate, complete, setOfTasks, tags} = t;
+
+            let filteredTags = [];
+
+            if(tags.length)
+                filteredTags = tags.filter(tag => tag.name === menuOption);
+
+            if(menuOption === "All task")
+                return complete === false;
 
             if (menuOption !== "All task") {
                 let currentDate = new Date();
@@ -294,7 +312,15 @@ class Tasks extends Component {
                 else if (menuOption === "Complete") {
                     return complete === true;
                 }
-            } else return complete === false;
+            }
+
+            if(setOfTasks.name === menuOption)
+                return setOfTasks.name === menuOption && complete === false;
+
+            if(filteredTags.length) {
+                if(filteredTags[0].name === menuOption)
+                    return filteredTags[0].name === menuOption && complete === false;
+            }
         }
     }
 }

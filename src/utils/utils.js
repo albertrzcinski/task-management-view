@@ -13,6 +13,14 @@ export const DELETE_TASK = URL+`tasks/delete`;
 export const SAVE_USER = URL+`users/save`;
 export const CHANGE_USER_PASS = URL+`users/changePass`;
 
+export const USER_COLLECTIONS = URL+`sets/byUser`;
+export const SAVE_COLLECTION = URL+`sets/save`;
+export const DELETE_COLLECTION = URL+`sets/delete`;
+
+export const USER_TAGS = URL+`tags/byUser`;
+export const SAVE_TAG = URL+`tags/save`;
+export const DELETE_TAG = URL+`tags/delete`;
+
 // export const ALL_USERS_URL = URL+`users/all`;
 
 export const displayNotification = (message, type) => {

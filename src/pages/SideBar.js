@@ -151,9 +151,12 @@ class SideBar extends Component {
                           Tomorrow
                       </PosedLI>
 
-                      <PosedLI>Go to date</PosedLI>
-
-                      <PosedLI>Collections</PosedLI>
+                      <PosedLI onClick={() => {
+                          click("Collections");
+                          displaySideBar();
+                      }}>
+                         Collections
+                      </PosedLI>
 
                       <PosedLI onClick={() => {
                           click("Shared");
@@ -162,7 +165,12 @@ class SideBar extends Component {
                           Shared with Me
                       </PosedLI>
 
-                      <PosedLI>Tags</PosedLI>
+                      <PosedLI onClick={() => {
+                          click("Tags");
+                          displaySideBar();
+                      }}>
+                          Tags
+                      </PosedLI>
 
                       <PosedLI onClick={() => {
                           click("Complete");
@@ -175,6 +183,7 @@ class SideBar extends Component {
                   <Footer
                       handleLogout={handleLogout}
                       displayAccount={displayAccount}
+                      menuClick={click}
                       onClick={() => displaySideBar()}
                   />
 

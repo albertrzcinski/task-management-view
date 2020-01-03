@@ -9,6 +9,7 @@ import {displayNotification, CURRENT_USER_URL} from "../utils/utils";
 import SideBar from "./SideBar";
 import ReactNoticifaction from "react-notifications-component";
 import Account from "./Account";
+import CollectionTags from "./CollectionTags";
 
 const DashboardWrapper = styled.div`
   height: auto;
@@ -26,6 +27,9 @@ const DashboardWrapper = styled.div`
 class Dashboard extends Component {
     constructor(props) {
         super(props);
+        this.navBarRef = React.createRef();
+        this.collectionTagsRef = React.createRef();
+
         this.state = {
             user: {
                 id: 0,
@@ -35,11 +39,9 @@ class Dashboard extends Component {
                 lastName: '',
                 photo: null
             },
-            showTasks: true,
             showSideBar: false,
             menuOption: 'All task',
             text: '',
-            showAccount: false
         }
     }
 
@@ -92,16 +94,19 @@ class Dashboard extends Component {
             );
     };
 
+    handleGetCollectionTags = (prop) => {
+        this.collectionTagsRef.current.getCollectionTagsData(prop);
+    };
+
     displaySideBar = () => {
         this.setState(prevState => ({
             showSideBar: !prevState.showSideBar,
             text: ''
         }));
-        this.child.childToggle();
+        this.navBarRef.current.childToggle();
     };
 
     handleMenuClick = (prop) => {
-        this.state.showAccount && this.setState({showAccount: false});
         this.setState({menuOption: prop});
     };
 
@@ -109,19 +114,13 @@ class Dashboard extends Component {
         this.setState({text: prop})
     };
 
-
-    displayAccount = () => {
-        this.state.showTasks && this.setState({showTasks: false});
-        this.setState({showAccount: true});
-    };
-
     closeAccount = () => {
-        !this.state.showTasks && this.setState({showTasks: true});
-        this.setState({showAccount: false});
+        //TODO do zmiany na desktop
+        this.setState({menuOption: 'All task'});
     };
 
     render() {
-        const {user, menuOption, text, showSideBar, showAccount, showTasks} = this.state;
+        const {user, menuOption, text, showSideBar} = this.state;
         const {loggedIn, handleLogout} = this.props;
 
         return (
@@ -132,26 +131,52 @@ class Dashboard extends Component {
 
                         <NavBar
                             displaySideBar={this.displaySideBar}
-                            ref={instance => {this.child = instance}}
+                            ref={this.navBarRef}
                             search={this.handleSearchTextChange}
+                            menuOption={menuOption}
+                            userId={user.id}
+                            handleLogout={handleLogout}
+                            handleGetCollectionTags={this.handleGetCollectionTags}
                         />
 
 
                         <DashboardWrapper>
-                            {showTasks &&
+                            {menuOption !== "Collections" &&
+                                menuOption !== "Tags" &&
+                                menuOption !== "Settings" &&
                                 <Tasks
                                     userId={user.id}
                                     menuOption={menuOption}
                                     text={text}
                                     handleLogout={handleLogout}
                                 />}
-                            {showAccount &&
+                            {menuOption === "Settings" &&
                                 <Account
                                     user={user}
                                     closeAccount={this.closeAccount}
                                     handleLogout={handleLogout}
                                     handleGetUser={this.handleGetUser}
                                 />}
+                            {menuOption === "Collections" &&
+                                <CollectionTags
+                                    text={text}
+                                    userId={user.id}
+                                    handleLogout={handleLogout}
+                                    menuOption={menuOption}
+                                    click={this.handleMenuClick}
+                                    ref={this.collectionTagsRef}
+                                />
+                            }
+                            {menuOption === "Tags" &&
+                                <CollectionTags
+                                    text={text}
+                                    userId={user.id}
+                                    handleLogout={handleLogout}
+                                    menuOption={menuOption}
+                                    click={this.handleMenuClick}
+                                    ref={this.collectionTagsRef}
+                                />
+                            }
                         </DashboardWrapper>
 
                         {showSideBar &&

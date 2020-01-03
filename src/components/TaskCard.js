@@ -13,6 +13,11 @@ const TaskWrapper = styled.div`
   background-color: ${({theme}) => theme.color.white};
   box-shadow: 0 0 10px 0 rgba(0,0,0,0.3);
   border-radius: 5px;
+  cursor: pointer;
+  
+   &:hover{
+    border: 1px solid cornflowerblue;
+  }
 `;
 
 const TopWrapper = styled.div`
@@ -99,6 +104,7 @@ const TaskCard = (props) => {
                             complete={complete}
                             trash={trash}
                             handleComplete={handleComplete}
+                            handleDelete={handleDelete}
                             id={id}
                         />
 
