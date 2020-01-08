@@ -5,7 +5,7 @@ import DashboardLayout from "../layout/DashboardLayout";
 import Tasks from "./Tasks";
 import NavBar from "../components/NavBar";
 import axios from "axios";
-import {displayNotification, CURRENT_USER_URL} from "../utils/utils";
+import {displayNotification, CURRENT_USER_URL, USER_COLLECTIONS, USER_TAGS} from "../utils/utils";
 import SideBar from "./SideBar";
 import ReactNoticifaction from "react-notifications-component";
 import Account from "./Account";
@@ -28,7 +28,7 @@ class Dashboard extends Component {
     constructor(props) {
         super(props);
         this.navBarRef = React.createRef();
-        this.collectionTagsRef = React.createRef();
+        this.tasksRef = React.createRef();
 
         this.state = {
             user: {
@@ -42,14 +42,10 @@ class Dashboard extends Component {
             showSideBar: false,
             menuOption: 'All task',
             text: '',
+            collections: [],
+            tags: [],
+            isShared: false
         }
-    }
-
-    componentDidMount() {
-        this.handleGetUser().then();
-        this.setState({
-            textIsEmpty: this.state.text === ''
-        })
     }
 
     handleGetUser = async () => {
@@ -94,9 +90,45 @@ class Dashboard extends Component {
             );
     };
 
-    handleGetCollectionTags = (prop) => {
-        this.collectionTagsRef.current.getCollectionTagsData(prop);
+    handleReloadTasks = (prop) => {
+        this.tasksRef.current.getTasks(prop);
     };
+
+    handleGetCollectionTags = async (type) => {
+            await axios
+                .get(type === "Collections" ? USER_COLLECTIONS : USER_TAGS,
+                    {
+                        params: {
+                            userId: this.state.user.id
+                        },
+                        headers: {
+                            "Content-Type": 'application/json',
+                            "Authorization": localStorage.getItem('token')
+                        }
+                    })
+                .then(res => {
+                    if(res.status === 200) {
+                        type === "Collections" ?
+                            this.setState({
+                                collections: res.data
+                            })
+                            :
+                            this.setState({
+                                tags: res.data
+                            })
+                    }
+                })
+                .catch(err => {
+                    if (!err.response) {
+                        // connection refused
+                        displayNotification("Server is not responding. Try again later.", "danger");
+                    } else {
+                        // 403
+                        this.props.handleLogout();
+                    }
+
+                });
+        };
 
     displaySideBar = () => {
         this.setState(prevState => ({
@@ -107,7 +139,16 @@ class Dashboard extends Component {
     };
 
     handleMenuClick = (prop) => {
-        this.setState({menuOption: prop});
+        this.setState({
+            menuOption: prop,
+            isShared: false
+        });
+    };
+
+    handleChangeIsClick = (type) => {
+        this.setState({
+            isShared: type
+        })
     };
 
     handleSearchTextChange = (prop) => {
@@ -119,8 +160,17 @@ class Dashboard extends Component {
         this.setState({menuOption: 'All task'});
     };
 
+    componentDidMount() {
+        this.handleGetUser().then();
+        setTimeout(()=>{
+            this.handleGetCollectionTags("Collections").then();
+            this.handleGetCollectionTags("Tags").then()
+        },200);
+
+    }
+
     render() {
-        const {user, menuOption, text, showSideBar} = this.state;
+        const {user, menuOption, text, showSideBar, collections, tags, isShared} = this.state;
         const {loggedIn, handleLogout} = this.props;
 
         return (
@@ -137,6 +187,9 @@ class Dashboard extends Component {
                             userId={user.id}
                             handleLogout={handleLogout}
                             handleGetCollectionTags={this.handleGetCollectionTags}
+                            collections={collections}
+                            tags={tags}
+                            handleReloadTasks={this.handleReloadTasks}
                         />
 
 
@@ -149,6 +202,12 @@ class Dashboard extends Component {
                                     menuOption={menuOption}
                                     text={text}
                                     handleLogout={handleLogout}
+                                    ref={this.tasksRef}
+                                    click={this.handleMenuClick}
+                                    collections={collections}
+                                    tags={tags}
+                                    isShared={isShared}
+                                    handleChangeIsClick={this.handleChangeIsClick}
                                 />}
                             {menuOption === "Settings" &&
                                 <Account
@@ -164,7 +223,9 @@ class Dashboard extends Component {
                                     handleLogout={handleLogout}
                                     menuOption={menuOption}
                                     click={this.handleMenuClick}
-                                    ref={this.collectionTagsRef}
+                                    handleGetCollectionTags={this.handleGetCollectionTags}
+                                    collections={collections}
+                                    tags={tags}
                                 />
                             }
                             {menuOption === "Tags" &&
@@ -174,7 +235,9 @@ class Dashboard extends Component {
                                     handleLogout={handleLogout}
                                     menuOption={menuOption}
                                     click={this.handleMenuClick}
-                                    ref={this.collectionTagsRef}
+                                    handleGetCollectionTags={this.handleGetCollectionTags}
+                                    collections={collections}
+                                    tags={tags}
                                 />
                             }
                         </DashboardWrapper>

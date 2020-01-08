@@ -1,32 +1,26 @@
 import React, {Component} from "react";
 import styled from "styled-components";
-import {ErrorMessage, Form, Formik} from "formik";
+import {Form, Formik} from "formik";
 import {FormikField} from "../layout/theme";
-import * as yup from "yup";
 import Button from "./Button";
 import axios from "axios";
-import {displayNotification, SAVE_COLLECTION, SAVE_TAG} from "../utils/utils";
-
-const StyledForm = styled(Form)`
-  margin: 10px 0 10px 0;
-`;
+import {SAVE_COMMENTS} from "../utils/utils";
 
 const Row = styled.div`
-  margin: 0 15px 0 15px;
+  margin-bottom: 5px;
   padding: 0 5px 0 5px;
   display: flex;
   justify-content: space-between;
   align-items: center;
   border: 1px solid ${({theme}) => theme.color.border};
-  opacity: 90%;
+  border-radius: 5px;
+  opacity: 80%;
   transition: opacity .3s ease-in-out, border-color .3s ease-in-out;
-  pointer-events: all;
 `;
 
 const StyledFormikField = styled(FormikField)`
-  padding: 0 20px 0 0;
-  font-size: 1.1em;
-  font-weight: 500;
+  padding: 0 20px 0 10px;
+  font-size: 0.8em;
   width: auto;
   min-width: 1px;
   border: none;
@@ -40,50 +34,35 @@ const StyledSaveButton = styled(Button)`
   border: .8px solid ${({theme}) => theme.color.blue};
 `;
 
-const StyledErrorMessage = styled(ErrorMessage)`
-  color: ${({theme}) => theme.color.red};
-  font-size: 0.8em;
-  padding-left: 35px;
-  margin: 2px 0 15px 0;
-`;
-
-const validationSchema = yup.object().shape({
-    name: yup.string()
-        .min(2, "Too short")
-        .required("This field is required")
-});
-
-const saveCollectionTags = (props, values, setSubmitting) => {
+const saveComments = (props, values, setSubmitting) => {
     axios
-        .post(props.menuOption === "Collections" ? SAVE_COLLECTION : SAVE_TAG,
+        .post(SAVE_COMMENTS,
             {
-                "id": props.id,
-                "name": values.name,
-                "owner": {
-                    "id":  props.userId
-                },
-                "user": {
+                "creationDate": new Date().toJSON(),
+                "content": values.content,
+                "author": {
                     "id": props.userId
+                },
+                "task": {
+                    "id": props.taskId
                 }
-            },{
+            }, {
                 headers: {
                     "Content-type": "application/json",
                     "Authorization": localStorage.getItem('token')
                 }
             })
         .then(() => {
-            displayNotification("Successfully updated.", "success");
             setSubmitting(false);
-            props.getData(props.menuOption);
-            props.toggleIsRename();
+            props.getCommentsByTask();
         })
-        .catch(err => { console.log(err);
+        .catch(err => {
+            console.log(err);
             props.handleLogout();
         });
-
 };
 
-class RenameForm extends Component {
+class CommentsForm extends Component{
     state = {
         isButton: false
     };
@@ -99,19 +78,21 @@ class RenameForm extends Component {
 
         return(
             <Formik
-                initialValues={{name: this.props.title}}
-                validationSchema={validationSchema}
-                onSubmit={(values, {setSubmitting}) => {
+                initialValues={{content: ''}}
+                onSubmit={(values, {setSubmitting, resetForm}) => {
                     setSubmitting(true);
-                    saveCollectionTags(this.props,values,setSubmitting);
+                    saveComments(this.props,values,setSubmitting);
+                    this.isButton(false);
+                    resetForm();
                 }}
             >
                 {({isSubmitting}) => (
-                    <StyledForm>
+                    <Form>
                         <Row>
                             <StyledFormikField
                                 type="text"
-                                name="name"
+                                name="content"
+                                placeholder="Write a comment..."
                                 onInput={() => this.isButton(true)}
                             />
 
@@ -121,12 +102,11 @@ class RenameForm extends Component {
                             </StyledSaveButton>
                             }
                         </Row>
-                        <StyledErrorMessage name="name" component="div"/>
-                    </StyledForm>
+                    </Form>
                 )}
             </Formik>
         );
     }
 }
 
-export default RenameForm;
+export default CommentsForm;

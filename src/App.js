@@ -7,7 +7,6 @@ import {Route, Redirect} from "react-router"
 import axios from "axios";
 import {displayNotification, LOGIN_URL} from "./utils/utils";
 import Dashboard from "./pages/Dashboard";
-import TaskCard from "./components/TaskCard";
 
 class App extends Component{
     handleLogout = () => {
@@ -75,7 +74,6 @@ class App extends Component{
               <Route exact path="/">
                   {this.state.loggedIn ? <Redirect to="/dashboard"/> : <Redirect to="/login"/>}
               </Route>
-              <Route path="/card" component={TaskCard} />
           </Router>
       </>
       )

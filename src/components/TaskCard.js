@@ -73,7 +73,7 @@ const StyledMdSettingsBackupRestore = styled(MdSettingsBackupRestore)`
 `;
 
 const TaskCard = (props) => {
-    const {id, desc, trash, complete, title, dueDate, tags, handleComplete, handleDelete} = props;
+    const {id, desc, trash, complete, title, dueDate, tags, handleComplete, handleDelete, onClick} = props;
 
     return (
             <>
@@ -106,6 +106,7 @@ const TaskCard = (props) => {
                             handleComplete={handleComplete}
                             handleDelete={handleDelete}
                             id={id}
+                            onClick={onClick}
                         />
 
                         {desc &&

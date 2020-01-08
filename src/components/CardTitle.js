@@ -56,15 +56,14 @@ const StyledMdSettingsBackupRestore = styled(MdSettingsBackupRestore)`
 `;
 
 const CardTitle = (props) => {
-    const {id, handleComplete, handleDelete, tags, complete, title, trash} = props;
+    const {id, handleComplete, handleDelete, tags, complete, title, trash, onClick} = props;
     const date = new Date(props.dueDate).toDateString();
-
     return (
         <>
             <StyledWrapper>
 
                 <P>
-                    <span>{title}</span>
+                    <span onClick={onClick}>{title}</span>
                     {trash && !tags.length ?
                     <span>
                         <StyledMdSettingsBackupRestore onClick={() => handleComplete(id)}/>
@@ -81,7 +80,7 @@ const CardTitle = (props) => {
 
                 <IconWrapper>
                     <div>
-                        <StyledFaCommentAlt/> <span> 20 </span>
+                        <StyledFaCommentAlt/>
                     </div>
                     <div>
                         <FiClock />

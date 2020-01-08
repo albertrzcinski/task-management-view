@@ -1,62 +1,34 @@
 import React, {Component} from "react";
 import CollectionTagsCard from "../components/CollectionTagsCard";
-import axios from "axios";
-import {displayNotification, USER_COLLECTIONS, USER_TAGS} from "../utils/utils";
-
 
 class CollectionTags extends Component{
     state = {
-        collections: [],
-        tags: []
+        collections: this.props.collections,
+        tags: this.props.tags
     };
 
-    getCollectionTagsData = (type) => {
-       axios
-          .get(type === "Collections" ? USER_COLLECTIONS : USER_TAGS,
-              {
-                  params: {
-                    userId: this.props.userId
-                  },
-                  headers: {
-                      "Content-Type": 'application/json',
-                      "Authorization": localStorage.getItem('token')
-                  }
-          })
-          .then(res => {
-              if(res.status === 200) {
-                  type === "Collections" ?
-                      this.setState({
-                        collections: res.data
-                      })
-                      :
-                      this.setState({
-                          tags: res.data
-                      })
-              }
-          })
-          .catch(err => {
-              if (!err.response) {
-                  // connection refused
-                  displayNotification("Server is not responding. Try again later.", "danger");
-              } else {
-                  // 403
-                  this.props.handleLogout();
-              }
+    componentDidUpdate(prevProps, prevState, snapshot) {
+        if(this.props.collections !== prevProps.collections)
+            this.setState({
+                collections: this.props.collections,
+            });
 
-          });
-    };
-
-    componentDidMount() {
-        this.getCollectionTagsData(this.props.menuOption);
+        if(this.props.tags !== prevProps.tags)
+            this.setState({
+                tags: this.props.tags,
+            });
     }
 
     render() {
-        const {text, menuOption, click, handleLogout, userId} = this.props;
+        const {text, menuOption, click, handleLogout, userId, handleGetCollectionTags,
+            isCollections, isTags, selectedTask, reloadTasks} = this.props;
         const {collections, tags} = this.state;
 
         return (
             <>
-                <h3>{menuOption}</h3>
+                {menuOption &&
+                    <h3>{menuOption}</h3>
+                }
 
                 {menuOption === "Collections" ?
                     collections.length ?
@@ -72,16 +44,18 @@ class CollectionTags extends Component{
                                         menuOption={menuOption}
                                         handleLogout={handleLogout}
                                         userId={userId}
-                                        getData={this.getCollectionTagsData}
+                                        getData={handleGetCollectionTags}
                                     />
                                 )
                             )
                         :
-                        //TODO inbox jest nie usuwalny
                         <h4>
                             You don't have any collections.
                         </h4>
-                    :
+                    : null
+                }
+
+                {menuOption === "Tags" ?
                     tags.length ?
                         tags
                             .filter(tag => tag.name.toLowerCase().includes(text.toLowerCase()))
@@ -94,13 +68,109 @@ class CollectionTags extends Component{
                                     menuOption={menuOption}
                                     handleLogout={handleLogout}
                                     userId={userId}
-                                    getData={this.getCollectionTagsData}
+                                    getData={handleGetCollectionTags}
                                 />
                             ))
                         :
                         <h4>
                             You don't have any tags.
                         </h4>
+                    : null
+                }
+
+                {isCollections &&
+                    <h3> Choose collection </h3>
+                }
+
+                {isCollections ?
+                    collections.length ?
+                        collections
+                            .filter(c => c.id !== selectedTask.setOfTasks.id)
+                            .map(({id, name}) => (
+                                <CollectionTagsCard
+                                    isCollections
+                                    key={id}
+                                    id={id}
+                                    title={name}
+                                    //click={click}
+                                    //menuOption={menuOption}
+                                    handleLogout={handleLogout}
+                                    selectedTaskId={selectedTask.id}
+                                    reloadTasks={reloadTasks}
+                                    menuClick={this.props.menuClick}
+                                />
+                            ))
+                        :
+                        <h4>
+                            You don't have any collection to choose.
+                        </h4>
+                    : null
+                }
+
+                {isTags && selectedTask.tags.length ?
+                    <h4>Current tags</h4>
+                    : null
+                }
+
+                {isTags ?
+                    selectedTask.tags.length ?
+                        selectedTask.tags
+                            .map(({id,name}) => (
+                                <CollectionTagsCard
+                                    isSelectedTaskTags
+                                    key={id}
+                                    id={id}
+                                    title={name}
+                                    //click={click}
+                                    //menuOption={menuOption}
+                                    handleLogout={handleLogout}
+                                    selectedTaskId={selectedTask.id}
+                                    reloadTasks={reloadTasks}
+                                    menuClick={this.props.menuClick}
+                                />
+                            ))
+                        :
+                        <div><></></div>
+                    : null
+                }
+
+                {isTags && tags.length ?
+                    <>
+                        <h4>Other tags</h4>
+                        <div><></></div>
+                    </>
+                    : null
+                }
+
+                {isTags ?
+                    tags.length ?
+                        tags
+                            .filter(t => {
+                                let selectedTag = selectedTask.tags.filter(st => st.id === t.id);
+                                if(selectedTag.length)
+                                    return null;
+
+                                return t;
+                            })
+                            .map(({id,name}) => (
+                                <CollectionTagsCard
+                                    isTags
+                                    key={id}
+                                    id={id}
+                                    title={name}
+                                    //click={click}
+                                    //menuOption={menuOption}
+                                    handleLogout={handleLogout}
+                                    selectedTaskId={selectedTask.id}
+                                    reloadTasks={reloadTasks}
+                                    menuClick={this.props.menuClick}
+                                />
+                            ))
+                        :
+                        <h4>
+                            You don't have any tags to choose.
+                        </h4>
+                        : null
                 }
             </>
 

@@ -4,7 +4,13 @@ import Button from "./Button";
 import posed from "react-pose";
 import RenameForm from "./RenameForm";
 import axios from "axios";
-import {DELETE_COLLECTION, DELETE_TAG, displayNotification} from "../utils/utils";
+import {
+    ADD_TAG_TO_TASK,
+    CHANGE_COLLECTION,
+    DELETE_COLLECTION,
+    DELETE_TAG,
+    displayNotification, REMOVE_TAG_FROM_TASK
+} from "../utils/utils";
 
 const TaskWrapper = styled.div`
   margin: 10px 0 5px 0;
@@ -99,7 +105,8 @@ const PosedTaskWrapper= posed(PTaskWrapper)({
 class CollectionTagsCard extends Component {
     state = {
         isOpen: false,
-        isRename: false
+        isRename: false,
+        isDefault: true
     };
 
     toggleIsOpen = () => {
@@ -115,35 +122,112 @@ class CollectionTagsCard extends Component {
     };
 
     handleDelete = (type) => {
-        axios
-            .delete(type === "Collections" ? DELETE_COLLECTION : DELETE_TAG,
+        if (window.confirm("This operation will delete all task in this collection. Do you want to continue ?")) {
+            axios
+                .delete(type === "Collections" ? DELETE_COLLECTION : DELETE_TAG,
+                    {
+                        params: {
+                            id: this.props.id
+                        },
+                        headers: {
+                            "Content-Type": 'application/json',
+                            "Authorization": localStorage.getItem('token')
+                        }
+                    })
+                .then(() => {
+                    displayNotification("Deleted.", "danger");
+                    this.props.getData(this.props.menuOption);
+                })
+                .catch(err => {
+                    if (!err.response) {
+                        // connection refused
+                        displayNotification("Server is not responding. Try again later.", "danger");
+                    } else {
+                        // 403
+                        this.props.handleLogout();
+                    }
+                });
+        }
+    };
+
+    handleCollectionChoose = async (taskId, collectionId) => {
+        await axios
+            .post(CHANGE_COLLECTION,
                 {
-                    params:{
-                        id: this.props.id
-                    },
+                    "taskId": taskId,
+                    "collectionId": collectionId
+                }, {
                     headers: {
-                        "Content-Type": 'application/json',
+                        "Content-type": "application/json",
                         "Authorization": localStorage.getItem('token')
                     }
                 })
             .then(() => {
-                displayNotification("Deleted.", "danger");
-                this.props.getData(this.props.menuOption);
+                //displayNotification("Collection changed.", "success");
+                this.props.reloadTasks();
             })
             .catch(err => {
-                if (!err.response) {
-                    // connection refused
-                    displayNotification("Server is not responding. Try again later.", "danger");
-                } else {
-                    // 403
-                    this.props.handleLogout();
-                }
+                console.log(err);
+                this.props.handleLogout();
             });
     };
 
+    handleTagsAdd = (taskId, tagId) => {
+        axios
+            .post(ADD_TAG_TO_TASK,
+                {
+                    "taskId": taskId,
+                    "tagId": tagId
+                }, {
+                    headers: {
+                        "Content-type": "application/json",
+                        "Authorization": localStorage.getItem('token')
+                    }
+                })
+            .then(() => {
+                //displayNotification("Tag added.", "success");
+                this.props.reloadTasks();
+            })
+            .catch(err => {
+                console.log(err);
+                this.props.handleLogout();
+            });
+    };
+
+    handleTagsRemove = (taskId, tagId) => {
+        axios
+            .post(REMOVE_TAG_FROM_TASK,
+                {
+                    "taskId": taskId,
+                    "tagId": tagId
+                }, {
+                    headers: {
+                        "Content-type": "application/json",
+                        "Authorization": localStorage.getItem('token')
+                    }
+                })
+            .then(() => {
+                //displayNotification("Tag removed.", "danger");
+                this.props.reloadTasks();
+            })
+            .catch(err => {
+                console.log(err);
+                this.props.handleLogout();
+            });
+    };
+
+    componentDidMount() {
+        if(this.props.isCollections || this.props.isTags || this.props.isSelectedTaskTags)
+            this.setState({
+                isDefault: false
+            })
+
+    }
+
     render() {
-        const {id, title, click, menuOption, handleLogout, userId, getData} = this.props;
-        const {isOpen, isRename} = this.state;
+        const {id, title, click, menuOption, handleLogout, userId, getData,
+            isCollections, selectedTaskId, isTags, isSelectedTaskTags} = this.props;
+        const {isOpen, isRename, isDefault} = this.state;
         return (
             <>
                 <TaskWrapper
@@ -168,12 +252,65 @@ class CollectionTagsCard extends Component {
                 </TaskWrapper>
                 <PosedTaskWrapper pose={isOpen ? 'open' : 'closed'}>
 
-                    <StyledTaskButton onClick={() => click(title)}> Show tasks </StyledTaskButton>
+                    {isDefault && title === 'Inbox' &&
+                        <>
+                        <StyledTaskButton onClick={() => click(title)}> Show tasks </StyledTaskButton>
+                        <ButtonsWrapper/>
+                        </>
+                    }
 
-                    <ButtonsWrapper>
-                        <StyledButton isBlue onClick={() => this.toggleIsRename()}> Rename </StyledButton>
-                        <StyledButton isRed onClick={() => this.handleDelete(menuOption)}> Delete </StyledButton>
-                    </ButtonsWrapper>
+                    {isDefault && title !== 'Inbox' &&
+                        <>
+                            <StyledTaskButton onClick={() => click(title)}> Show tasks </StyledTaskButton>
+
+                            <ButtonsWrapper>
+                                <StyledButton isBlue onClick={() => this.toggleIsRename()}> Rename </StyledButton>
+                                <StyledButton isRed onClick={() => this.handleDelete(menuOption)}> Delete </StyledButton>
+                            </ButtonsWrapper>
+                        </>
+                    }
+
+                    {isCollections &&
+                        <>
+                            <StyledTaskButton
+                                onClick={() => {
+                                    this.props.menuClick("Edit");
+                                    this.handleCollectionChoose(selectedTaskId,id).then();
+                                }}
+                            >
+                                Choose
+                            </StyledTaskButton>
+                            <ButtonsWrapper/>
+                        </>
+                    }
+
+                    {isTags &&
+                        <>
+                            <StyledTaskButton
+                                onClick={() => {
+                                    this.props.menuClick("Edit");
+                                    this.handleTagsAdd(selectedTaskId,id)
+                                }}
+                            >
+                                Add to task
+                            </StyledTaskButton>
+                            <ButtonsWrapper/>
+                        </>
+                    }
+
+                    {isSelectedTaskTags &&
+                        <>
+                            <StyledTaskButton isRed
+                                onClick={() => {
+                                    this.props.menuClick("Edit");
+                                    this.handleTagsRemove(selectedTaskId,id)
+                                }}
+                            >
+                                Remove from task
+                            </StyledTaskButton>
+                            <ButtonsWrapper/>
+                        </>
+                    }
                 </PosedTaskWrapper>
             </>
         );

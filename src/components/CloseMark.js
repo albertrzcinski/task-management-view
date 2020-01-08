@@ -13,6 +13,13 @@ const Close = styled.button`
   :focus{
     outline: none;
   }
+  
+  ${props => props.due &&
+    css`
+      margin-left: 5px;
+      left: unset;
+      margin-top: unset;
+    `}
 `;
 
 const sharedCss = css`
@@ -36,7 +43,7 @@ const Line = styled.div`
 
 const CloseMark = (props) => {
   return (
-      <Close onClick={props.onClick}>
+      <Close onClick={props.onClick} due={props.due}>
           <Line/>
       </Close>
   );

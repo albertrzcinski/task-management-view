@@ -4,6 +4,7 @@ import styled, {css} from "styled-components";
 import axios from "axios";
 import {COMPLETE_TASK, DELETE_TASK, displayNotification, TASKS_BY_MEMBER_URL, TASKS_BY_OWNER_URL} from "../utils/utils";
 import {FaSortAlphaDown, FaSortAlphaUp, FaSortNumericDown, FaSortNumericUp} from "react-icons/fa";
+import TaskEdit from "./TaskEdit";
 
 const TitleWrapper = styled.div`
   margin: 10px 0 -5px 0;
@@ -11,6 +12,16 @@ const TitleWrapper = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-between;
+  
+  ${props => props.menuOption === "Edit" || 
+    props.menuOption === "isCollection" ||
+    props.menuOption === "isTags" ||
+    props.menuOption === "isMembers" ?
+    css`
+    display: none;
+    `
+    : null
+    }
 `;
 
 const H3 = styled.h3`
@@ -44,15 +55,17 @@ const StyledFaSortAlphaUp = styled(FaSortAlphaUp)`
 class Tasks extends Component {
     constructor(props) {
         super(props);
+        this.taskCardRef = React.createRef();
         this.state = {
-            numericDown: false,
+            numericDown: true,
             alphaDown: false,
             tasks: [],
-            sharedTasks: []
+            sharedTasks: [],
+            selectedTask: []
         };
     }
 
-    toggleNumeric = () => {
+    toggleNumeric = (get) => {
         const {tasks, sharedTasks, numericDown} = this.state;
 
         const compareDateASC = (a,b) => {
@@ -66,17 +79,26 @@ class Tasks extends Component {
             return 0;
         };
 
-        if(numericDown) {
-            tasks.sort(compareDateASC);
-            sharedTasks.sort(compareDateASC);
+        if(get !== true) {
+            if (numericDown) {
+                this.setState({
+                   tasks: tasks.sort(compareDateASC),
+                   sharedTasks: sharedTasks.sort(compareDateASC)
+                });
+            } else {
+                this.setState({
+                    tasks: tasks.sort(compareDateDESC),
+                    sharedTasks: sharedTasks.sort(compareDateDESC)
+                });
+            }
+            this.setState(prevState => ({
+                numericDown: !prevState.numericDown
+            }))
+        } else {
+            this.setState({
+               tasks: tasks.sort(compareDateDESC)
+            });
         }
-        else {
-            tasks.sort(compareDateDESC);
-            sharedTasks.sort(compareDateDESC);
-        }
-        this.setState(prevState => ({
-            numericDown: !prevState.numericDown
-        }))
     };
 
     toggleAlpha = () => {
@@ -94,20 +116,24 @@ class Tasks extends Component {
         };
 
         if(!alphaDown) {
-            tasks.sort(compareTitleASC);
-            sharedTasks.sort(compareTitleASC);
+            this.setState({
+                tasks: tasks.sort(compareTitleASC),
+                sharedTasks: sharedTasks.sort(compareTitleASC)
+            })
         }
         else {
-            tasks.sort(compareTitleDESC);
-            sharedTasks.sort(compareTitleDESC);
+            this.setState({
+                tasks: tasks.sort(compareTitleDESC),
+                sharedTasks: sharedTasks.sort(compareTitleDESC)
+            })
         }
         this.setState(prevState => ({
             alphaDown: !prevState.alphaDown
         }))
     };
 
-    getTasks = (menuOption) => {
-        axios
+    getTasks =  (menuOption) => {
+         axios
             .get(menuOption === "Shared" ? TASKS_BY_MEMBER_URL : TASKS_BY_OWNER_URL,
             {
                 params: {
@@ -121,18 +147,28 @@ class Tasks extends Component {
             .then(res => {
                 if(menuOption === "Shared") {
                     this.setState({
-                        sharedTasks: res.data,
+                        sharedTasks: res.data
                     });
                 }
                 else {
                     this.setState({
-                        tasks: res.data,
+                        tasks: res.data
                     });
-                    this.toggleNumeric();
+
+                    this.toggleNumeric(true);
+
+
+                    if(this.state.selectedTask !== undefined && Object.keys(this.state.selectedTask).length > 0) {
+                        let selectedTask = res.data.filter(t => t.id === this.state.selectedTask.id);
+                        this.setState({
+                            selectedTask: selectedTask[0]
+                        })
+                    }
                 }
             })
             .catch((err) => {
                 if (!err.response) {
+                    console.log(err);
                     // connection refused
                     displayNotification("Server is not responding. Try again later.", "danger");
                 } else {
@@ -184,10 +220,17 @@ class Tasks extends Component {
             .catch(this.props.handleLogout);
     };
 
+    handleChangeSelectedTaskState = (task) => {
+      this.setState({
+          selectedTask: task
+      })
+    };
+
     componentDidMount() {
         setTimeout(() => {
             this.getTasks();
         },100);
+        this.setState({ card: this.taskCardRef.current });
     }
 
     componentDidUpdate(prevProps, prevState, snapshot) {
@@ -198,89 +241,130 @@ class Tasks extends Component {
     }
 
     render() {
-        const {menuOption, text} = this.props;
-        const {tasks, sharedTasks} = this.state;
+        const {menuOption, text, click, handleLogout, userId, isShared, handleChangeIsClick} = this.props;
+        const {tasks, sharedTasks, selectedTask} = this.state;
 
         //tasks.map(({setOfTasks}) => (console.log(setOfTasks.name)));
 
         return (
             <>
-                <TitleWrapper>
-                    <H3> {menuOption} </H3>
-                    <div>
-                  <span onClick={this.toggleNumeric}>
-                      {this.state.numericDown ?
-                          <StyledFaSortNumericDown/>
-                          : <StyledFaSortNumericUp/>}
-                  </span>
 
-                        <span onClick={this.toggleAlpha}>
-                      {this.state.alphaDown ?
-                          <StyledFaSortAlphaDown/>
-                          : <StyledFaSortAlphaUp/>}
-                  </span>
-                    </div>
-                </TitleWrapper>
+                    <TitleWrapper menuOption={menuOption}>
+                        <H3> {menuOption} </H3>
+                        <div>
+                      <span onClick={this.toggleNumeric}>
+                          {this.state.numericDown ?
+                              <StyledFaSortNumericDown/>
+                              : <StyledFaSortNumericUp/>}
+                      </span>
 
-                {menuOption !== "Shared" ?
+                            <span onClick={this.toggleAlpha}>
+                          {this.state.alphaDown ?
+                              <StyledFaSortAlphaDown/>
+                              : <StyledFaSortAlphaUp/>}
+                      </span>
+                        </div>
+                    </TitleWrapper>
+
+                {menuOption !== "Shared" &&
+                    menuOption !== "isCollection" &&
+                    menuOption !== "isTags" &&
+                    menuOption !== "isMembers" ?
                     tasks.length ?
                         tasks
                             .filter(whichTask)
                             .filter(task => task.title.toLowerCase().includes(text.toLowerCase()))
                             .map(
-                                ({id, title, description, creationDate, tags}) => (
+                                (task) => (
                                     menuOption === "Complete" ?
                                         <TaskCard
-                                            key={id}
-                                            id={id}
-                                            title={title}
-                                            desc={description}
+                                            key={task.id}
+                                            id={task.id}
+                                            title={task.title}
+                                            desc={task.description}
                                             //TODO change due date
-                                            dueDate={creationDate}
-                                            tags={tags}
+                                            dueDate={task.creationDate}
+                                            tags={task.tags}
                                             trash
                                             handleDelete={this.handleDelete}
                                             handleComplete={this.handleComplete}
                                         />
-                                    :
+                                        :
                                         <TaskCard
-                                            key={id}
-                                            id={id}
-                                            title={title}
-                                            desc={description}
+                                            key={task.id}
+                                            id={task.id}
+                                            title={task.title}
+                                            desc={task.description}
                                             //TODO change due date
-                                            dueDate={creationDate}
-                                            tags={tags}
+                                            dueDate={task.creationDate}
+                                            tags={task.tags}
                                             handleComplete={this.handleComplete}
                                             complete
+                                            onClick={() => {
+                                                click("Edit");
+                                                this.setState({
+                                                    selectedTask: task
+                                                });
+                                            }}
                                         />
-                            ))
-                        :
-                        <h4>
-                            You don't have any task to do.
-                        </h4>
+                                ))
                     :
-                        sharedTasks.length ?
-                            sharedTasks
-                                .filter(task => task.title.toLowerCase().includes(text.toLowerCase()))
-                                .map(
-                                    ({id, title, description, creationDate, tags}) => (
-                                        <TaskCard
-                                            key={id}
-                                            id={id}
-                                            title={title}
-                                            desc={description}
-                                            //TODO change due date
-                                            dueDate={creationDate}
-                                            tags={tags}
-                                        />
-                                    )
-                                )
-                            :
-                            <h4>
-                                You don't have any task to do.
-                            </h4>
+                    <h4>
+                        You don't have any task to do.
+                    </h4>
+                    : null
+                }
 
+                {menuOption === "Shared" &&
+                    menuOption !== "isCollection" &&
+                    menuOption !== "isTags" &&
+                    menuOption !== "isMembers" ?
+                    sharedTasks.length ?
+                        sharedTasks
+                            .filter(task => task.title.toLowerCase().includes(text.toLowerCase()))
+                            .map(
+                                (task) => (
+                                    <TaskCard
+                                        key={task.id}
+                                        id={task.id}
+                                        title={task.title}
+                                        desc={task.description}
+                                        //TODO change due date
+                                        dueDate={task.creationDate}
+                                        tags={task.tags}
+                                        onClick={() => {
+                                            click("Edit");
+                                            this.setState({
+                                                selectedTask: task
+                                            });
+                                            handleChangeIsClick(true);
+                                        }}
+                                    />
+                                )
+                            )
+                    :
+                    <h4>
+                        You don't have any task to do.
+                    </h4>
+                    : null
+                }
+
+                {menuOption === "Edit" || menuOption === "isCollection" ||
+                    menuOption === "isTags" ||
+                    menuOption === "isMembers" ?
+                    <TaskEdit
+                        selectedTask={selectedTask}
+                        handleChangeSelectedTaskState={this.handleChangeSelectedTaskState}
+                        collections={this.props.collections}
+                        tags={this.props.tags}
+                        menuOption={menuOption}
+                        handleLogout={handleLogout}
+                        reloadTasks={this.getTasks}
+                        userId={userId}
+                        isShared={isShared}
+                        menuClick={click}
+                    />
+                    : null
                 }
             </>
         );

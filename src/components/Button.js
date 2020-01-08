@@ -25,7 +25,7 @@ const Button = styled.button`
       background: ${({theme}) => theme.color.white};
       color: ${({theme}) => theme.color.blue};
       box-shadow: 3px 6px 15px -10px ${({theme}) => theme.color.text};
-      border: 1.5px solid ${({theme}) => theme.color.blue};
+      border: 1.2px solid ${({theme}) => theme.color.blue};
       transition: opacity .2s ease-in-out, border-color .2s ease-in-out;
       
       :hover, :focus {
