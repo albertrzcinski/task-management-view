@@ -5,6 +5,7 @@ import CardTitle from "./CardTitle";
 import {IoMdCheckmarkCircleOutline} from "react-icons/io"
 import {FaTrashAlt} from "react-icons/fa"
 import {MdSettingsBackupRestore} from "react-icons/md"
+import {displayNotification} from "../utils/utils";
 
 const TaskWrapper = styled.div`
   margin: 20px 0 20px 0;
@@ -73,7 +74,7 @@ const StyledMdSettingsBackupRestore = styled(MdSettingsBackupRestore)`
 `;
 
 const TaskCard = (props) => {
-    const {id, desc, trash, complete, title, dueDate, tags, handleComplete, handleDelete, onClick} = props;
+    const {id, desc, trash, complete, title, dueDate, tags, handleComplete, handleDelete, onClick, dependentTask} = props;
 
     return (
             <>
@@ -92,7 +93,13 @@ const TaskCard = (props) => {
                                 :null
                             }
                             {complete && tags.length ?
-                                <StyledCheckMark onClick={() => handleComplete(id)}/>
+                                <StyledCheckMark onClick={() => {
+
+                                dependentTask !== null ?
+                                    displayNotification("Cannot completed this task. Complete dependent tasks first.", "warning")
+                                :
+                                    handleComplete(id)
+                                }}/>
                                 : null
                             }
                         </TopWrapper>
@@ -107,6 +114,7 @@ const TaskCard = (props) => {
                             handleDelete={handleDelete}
                             id={id}
                             onClick={onClick}
+                            dependentTask={dependentTask}
                         />
 
                         {desc &&

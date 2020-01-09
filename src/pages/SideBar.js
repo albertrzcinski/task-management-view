@@ -173,6 +173,13 @@ class SideBar extends Component {
                       </PosedLI>
 
                       <PosedLI onClick={() => {
+                          click("Dependent tasks");
+                          displaySideBar();
+                      }}>
+                          Dependent tasks
+                      </PosedLI>
+
+                      <PosedLI onClick={() => {
                           click("Complete");
                           displaySideBar();
                       }}>

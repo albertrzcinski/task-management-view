@@ -55,7 +55,6 @@ const StyledFaSortAlphaUp = styled(FaSortAlphaUp)`
 class Tasks extends Component {
     constructor(props) {
         super(props);
-        this.taskCardRef = React.createRef();
         this.state = {
             numericDown: true,
             alphaDown: false,
@@ -132,8 +131,8 @@ class Tasks extends Component {
         }))
     };
 
-    getTasks =  (menuOption) => {
-         axios
+    getTasks = (menuOption) => {
+        axios
             .get(menuOption === "Shared" ? TASKS_BY_MEMBER_URL : TASKS_BY_OWNER_URL,
             {
                 params: {
@@ -144,7 +143,7 @@ class Tasks extends Component {
                     "Authorization": localStorage.getItem('token')
                 }
             })
-            .then(res => {
+            .then(async res => {
                 if(menuOption === "Shared") {
                     this.setState({
                         sharedTasks: res.data
@@ -155,7 +154,7 @@ class Tasks extends Component {
                         tasks: res.data
                     });
 
-                    this.toggleNumeric(true);
+                    await this.toggleNumeric(true);
 
 
                     if(this.state.selectedTask !== undefined && Object.keys(this.state.selectedTask).length > 0) {
@@ -230,7 +229,6 @@ class Tasks extends Component {
         setTimeout(() => {
             this.getTasks();
         },100);
-        this.setState({ card: this.taskCardRef.current });
     }
 
     componentDidUpdate(prevProps, prevState, snapshot) {
@@ -300,6 +298,7 @@ class Tasks extends Component {
                                             tags={task.tags}
                                             handleComplete={this.handleComplete}
                                             complete
+                                            dependentTask={task.overridingTask}
                                             onClick={() => {
                                                 click("Edit");
                                                 this.setState({

@@ -39,6 +39,8 @@ export const COMMENTS_BY_TASK = URL+`comments/byTask`;
 export const SAVE_COMMENTS = URL+`comments/save`;
 export const DELETE_COMMENTS = URL+`comments/delete`;
 
+export const ADD_DEPENDENT_TASK = URL+`tasks/addDependentTask`;
+export const DELETE_DEPENDENT_TASKS = URL+`tasks/deleteDependentTasks`;
 
 // export const ALL_USERS_URL = URL+`users/all`;
 

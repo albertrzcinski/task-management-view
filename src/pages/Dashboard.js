@@ -10,6 +10,7 @@ import SideBar from "./SideBar";
 import ReactNoticifaction from "react-notifications-component";
 import Account from "./Account";
 import CollectionTags from "./CollectionTags";
+import DependentTasks from "./DependentTasks";
 
 const DashboardWrapper = styled.div`
   height: auto;
@@ -197,6 +198,7 @@ class Dashboard extends Component {
                             {menuOption !== "Collections" &&
                                 menuOption !== "Tags" &&
                                 menuOption !== "Settings" &&
+                                menuOption !== "Dependent tasks" &&
                                 <Tasks
                                     userId={user.id}
                                     menuOption={menuOption}
@@ -240,6 +242,18 @@ class Dashboard extends Component {
                                     tags={tags}
                                 />
                             }
+                            {menuOption === "Dependent tasks" &&
+                            <DependentTasks
+                                userId={user.id}
+                                handleLogout={handleLogout}
+                                menuOption={menuOption}
+                                text={text}
+                                // click={this.handleMenuClick}
+                                // collections={collections}
+                                // tags={tags}
+                                // isShared={isShared}
+                                // handleChangeIsClick={this.handleChangeIsClick}
+                            />}
                         </DashboardWrapper>
 
                         {showSideBar &&

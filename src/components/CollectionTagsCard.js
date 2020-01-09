@@ -122,9 +122,35 @@ class CollectionTagsCard extends Component {
     };
 
     handleDelete = (type) => {
-        if (window.confirm("This operation will delete all task in this collection. Do you want to continue ?")) {
+        if (type === "Collections" && window.confirm("This operation will delete all task in this collection. Do you want to continue ?")) {
             axios
-                .delete(type === "Collections" ? DELETE_COLLECTION : DELETE_TAG,
+                .delete(DELETE_COLLECTION,
+                    {
+                        params: {
+                            id: this.props.id
+                        },
+                        headers: {
+                            "Content-Type": 'application/json',
+                            "Authorization": localStorage.getItem('token')
+                        }
+                    })
+                .then(() => {
+                    displayNotification("Deleted.", "danger");
+                    this.props.getData(this.props.menuOption);
+                })
+                .catch(err => {
+                    if (!err.response) {
+                        // connection refused
+                        displayNotification("Server is not responding. Try again later.", "danger");
+                    } else {
+                        // 403
+                        this.props.handleLogout();
+                    }
+                });
+        }
+        else {
+            axios
+                .delete(DELETE_TAG,
                     {
                         params: {
                             id: this.props.id

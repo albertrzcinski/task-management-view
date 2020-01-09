@@ -8,7 +8,13 @@ import "react-datepicker/dist/react-datepicker.css";
 import Button from "../components/Button";
 import CollectionTags from "./CollectionTags";
 import axios from "axios";
-import {CHANGE_DATE, CHANGE_DESCRIPTION, CHANGE_TITLE, displayNotification} from "../utils/utils";
+import {
+    CHANGE_DATE,
+    CHANGE_DESCRIPTION,
+    CHANGE_TITLE,
+    DELETE_DEPENDENT_TASKS,
+    displayNotification
+} from "../utils/utils";
 import Members from "./Members";
 import Comments from "./Comments";
 
@@ -108,6 +114,11 @@ const StyledContentEditable = styled(ContentEditable)`
   }
 `;
 
+const Ol = styled.ol`
+  margin: 0 0 13px 0;
+  font-size: 0.9em;
+`;
+
 const Additions = styled.div`
   margin-top: 10px;
   
@@ -182,11 +193,20 @@ class TaskEdit extends Component {
     };
 
     saveDescription = () => {
+        const {selectedTask} = this.state;
+
+        let desc;
+        if(selectedTask.description) {
+            desc = selectedTask.description.replace(/<div>/gi, " ");
+            desc = desc.replace(/<\/div>/gi, " ");
+            desc = desc.replace(/<br>/gi, " ");
+        }
+
         axios
             .post(CHANGE_DESCRIPTION,
                 {
-                    "taskId": this.state.selectedTask.id,
-                    "desc": this.state.selectedTask.description
+                    "taskId": selectedTask.id,
+                    "desc": desc
                 }, {
                     headers: {
                         "Content-type": "application/json",
@@ -258,6 +278,25 @@ class TaskEdit extends Component {
         this.saveDate();
     };
 
+    handleDeleteDependentTask = () => {
+        axios
+            .post(DELETE_DEPENDENT_TASKS,null,
+                {
+                    params: {
+                        taskId: this.state.selectedTask.id
+                    },
+                    headers: {
+                        "Content-type": "application/json",
+                        "Authorization": localStorage.getItem('token')
+                    }
+                })
+            .then(() => this.props.reloadTasks())
+            .catch(err => {
+                console.log(err);
+                this.props.handleLogout();
+            });
+    };
+
     render() {
         const {selectedTask, desc} = this.state;
 
@@ -266,6 +305,13 @@ class TaskEdit extends Component {
 /*        const hours = dueDate.getHours() < 10 ? `${dueDate.getHours()}0` : dueDate.getHours();
         const minutes = dueDate.getMinutes() < 10 ? `${dueDate.getMinutes()}0` : dueDate.getMinutes();
         const due = `${dueDate.toDateString()} at ${hours}:${minutes}`;*/
+        let dependent = selectedTask;
+        const list = [];
+
+        while (dependent.overridingTask !== null) {
+            list.push(<li key={dependent.overridingTask.id}> {dependent.overridingTask.title} </li>);
+            dependent = dependent.overridingTask;
+        }
 
         return (
             <>
@@ -401,6 +447,16 @@ class TaskEdit extends Component {
                             </>
                         }
 
+                        {selectedTask.overridingTask &&
+                            <>
+                                <P> Dependent Tasks </P>
+                                <Ol>
+                                    {list}
+                                </Ol>
+                            </>
+                        }
+
+
                         {!isShared &&
                             <Additions>
                                 {!selectedTask.dueDate &&
@@ -437,6 +493,13 @@ class TaskEdit extends Component {
                                     onClick={() => this.props.menuClick("isCollection")}
                                 >
                                     Move to...
+                                </Button>
+
+                                <Button
+                                    isWhite
+                                    onClick={() => this.handleDeleteDependentTask()}
+                                >
+                                    Delete dependent tasks
                                 </Button>
 
                             </Additions>

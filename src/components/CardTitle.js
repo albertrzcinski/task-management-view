@@ -5,6 +5,7 @@ import {FaCommentAlt} from "react-icons/fa"
 import {IoMdCheckmarkCircleOutline} from "react-icons/io"
 import {MdSettingsBackupRestore} from "react-icons/md"
 import {FaTrashAlt} from "react-icons/fa"
+import {displayNotification} from "../utils/utils";
 const StyledWrapper = styled.div`
   margin: 0 20px 0 20px;
 `;
@@ -56,7 +57,7 @@ const StyledMdSettingsBackupRestore = styled(MdSettingsBackupRestore)`
 `;
 
 const CardTitle = (props) => {
-    const {id, handleComplete, handleDelete, tags, complete, title, trash, onClick} = props;
+    const {id, handleComplete, handleDelete, tags, complete, title, trash, onClick, dependentTask} = props;
     const date = new Date(props.dueDate).toDateString();
     return (
         <>
@@ -73,7 +74,13 @@ const CardTitle = (props) => {
                     }
 
                     {!tags.length && complete ?
-                        <StyledCheckMark onClick={() => handleComplete(id)}/>
+                        <StyledCheckMark onClick={() => {
+                            if(dependentTask !== null){
+                                if(dependentTask.complete === true) handleComplete(id);
+                                else displayNotification("Cannot completed this task. Complete dependent tasks first.", "warning")
+                            }
+                            else handleComplete(id)
+                        }}/>
                         :null
                     }
                 </P>
