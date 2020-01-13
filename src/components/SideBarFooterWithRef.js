@@ -10,6 +10,10 @@ const sharedCss = css`
   :hover {
     color: ${({theme}) => theme.color.midnightblue};
   }
+  
+    ${({theme}) => theme.media.tablet} {
+        font-size: 1.8rem;
+  }   
 `;
 
 const StyledMdSettings = styled(MdSettings)`
@@ -17,14 +21,22 @@ const StyledMdSettings = styled(MdSettings)`
 `;
 
 const StyledMdExitToApp = styled(MdExitToApp)`
+  margin-left: 135px;
   ${sharedCss}
+  
+  ${({theme}) => theme.media.tablet} {
+        margin-left: 50px;
+  }  
 `;
 
 const Wrapper = styled.div`
-  display: flex;
-  justify-content: space-between;
-  width: 60vw;
+  width: 100%;
   margin-top: 3em;
+  
+  ${({theme}) => theme.media.tablet} {
+        padding-left: 40px;
+        margin-top: 200px;
+  }   
 `;
 
 const SideBarFooterWithRef = React.forwardRef((props, ref) => {

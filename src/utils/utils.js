@@ -6,6 +6,9 @@ const URL = `http://localhost:8080/`;
 export const LOGIN_URL = URL+`login`;
 export const SIGN_UP_URL = URL+`users/create`;
 
+export const CHANGE_EMAIL_PASS = URL+`pass/changePass`;
+export const RESET_PASS = URL+`pass/reset`;
+
 export const CURRENT_USER_URL = URL+`users/me`;
 export const ALL_USERS = URL+`users/all`;
 

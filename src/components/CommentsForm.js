@@ -21,7 +21,7 @@ const Row = styled.div`
 const StyledFormikField = styled(FormikField)`
   padding: 0 20px 0 10px;
   font-size: 0.8em;
-  width: auto;
+  width: 100%;
   min-width: 1px;
   border: none;
 `;

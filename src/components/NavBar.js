@@ -1,5 +1,5 @@
 import React, {Component} from "react";
-import styled from "styled-components";
+import styled, {css} from "styled-components";
 import SearchBar from "./SearchBar";
 import {MdAddCircle} from "react-icons/md"
 import HamburgerMenu from "./HamburgerMenu";
@@ -12,8 +12,14 @@ const NavBarWrapper = styled.div`
     align-items: center;
     justify-content: space-between;
     height: 70px;
-    margin: 0 20px 0 20px;
+    width: 95%;
+    margin: 0 auto;
+    padding: 0 20px 0 20px;
     color: ${({theme}) => theme.color.background};
+    
+    ${({theme}) => theme.media.tablet}{
+      height: 80px;
+    }
 `;
 
 const CircleButton = styled.button`
@@ -31,10 +37,31 @@ const StyledMdAddCircle = styled(MdAddCircle)`
   width: 2.6em;
   color: #b0caff;
   cursor: pointer;
+  
+  ${({theme}) => theme.media.tablet}{
+      height: 3em;
+      width: 3em;
+  }
 `;
 
 const StyledField = styled(Field)`
   display: none;
+`;
+
+const Photo = styled.img`
+  border-radius: 50px;
+  border: 1px solid ${({theme}) => theme.color.brighterBlue};
+  background-size: contain;
+  width: 50px;
+  height: 50px;
+  margin-left: 10%;
+  
+  ${({blank}) =>
+    blank &&
+    css`
+       border: none;
+       margin-bottom: 0;
+    `};
 `;
 
 const createTask = (props, values, setSubmitting) => {
@@ -111,22 +138,58 @@ const createCollectionTags = (props, values, setSubmitting) => {
 
 };
 
+const DIV = styled.div`
+  ${({theme}) => theme.media.tablet} {
+        display: none;
+  }   
+`;
+
+const PhotoDiv = styled.div`
+  display: none;
+  width: 200px;
+
+  ${({theme}) => theme.media.tablet} {
+        display: flex;
+  }   
+`;
+
+const SearchDiv = styled.div`
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-left: 10px;
+    width: 95%;
+`;
+
 class NavBar extends Component {
     constructor(props) {
         super(props);
         this.child = React.createRef();
     }
+
     childToggle = () =>{
         this.child.current.toggle();
     };
 
     render() {
+        const {photo} = this.props;
+        const photoSrc = photo ? `data:image/*.*;base64,${photo}` : 'data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs%3D';
+
         return (
             <NavBarWrapper>
-                <div onClick={this.props.displaySideBar}>
+                <DIV onClick={this.props.displaySideBar}>
                     <HamburgerMenu ref={this.child}/>
-                </div>
+                </DIV>
 
+                <PhotoDiv>
+                {photo ?
+                    <Photo src={photoSrc}/>
+                    :
+                    <Photo src={photoSrc} blank/>
+                }
+                </PhotoDiv>
+
+                <SearchDiv>
                 {this.props.menuOption !== "Settings" ?
                     <SearchBar search={this.props.search} />
                     : null
@@ -135,9 +198,12 @@ class NavBar extends Component {
                 {this.props.menuOption === "Complete" ||
                     this.props.menuOption === "Shared" ||
                         this.props.menuOption === "Settings" ?
+                    <>
                     <CircleButton>
                     </CircleButton>
+                    </>
                     :
+                    <>
                     <Formik
                         initialValues={{name: 'New'}}
                         onSubmit={(values, {setSubmitting}) => {
@@ -165,8 +231,9 @@ class NavBar extends Component {
                             </Form>
                         )}
                     </Formik>
+                    </>
                 }
-
+                </SearchDiv>
             </NavBarWrapper>
         );
     }

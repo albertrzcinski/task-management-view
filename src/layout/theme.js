@@ -19,15 +19,15 @@ export const theme = {
         midnightblue: 'midnightblue'
     },
     media: {
-        desktop: '@media (min-width: 1024px)',
-        tablet: '@media (min-width: 728px)'
+        desktop: '@media (min-width: 1025px)',
+        tablet: '@media (min-width: 769px)'
     }
 };
 
 export const FormikField = styled(Field)`
-  display: flex;
-  flex-direction: column;
-  width: 75vw;
+  //display: flex;
+  //flex-direction: column;
+  width: 100%;
   height: 40px;
   opacity: 60%;
   border: 2px solid ${({theme}) => theme.color.border};
@@ -43,12 +43,12 @@ export const FormikField = styled(Field)`
 `;
 
 export const Img = styled.img`
-  margin-top: 4em;
+  margin-top: 3em;
   width: 30%;
 `;
 
 export const HR = styled.hr`
-  width: 75vw;
+  width: 75%;
   margin-bottom: 25px;
   opacity: 50%;
 `;

@@ -5,17 +5,16 @@ import Button from "./Button";
 import * as yup from "yup";
 
 const StyledField = styled(Field)`
-  display: flex;
-  flex-direction: column;
-  width: 75vw;
+  width: 100%;
+  max-width: 550px;
   height: 32px;
-  margin-bottom: 15px;
+  margin: 0 auto 15px auto;
   opacity: 60%;
   border: 2px solid ${({theme}) => theme.color.border};
   border-radius: 5px;
   text-align: center;
   transition: opacity .3s ease-in-out, border-color .3s ease-in-out;
-  
+
   :focus {
     opacity: 75%;
     border-color: ${({theme}) => theme.color.blue};
@@ -27,6 +26,26 @@ const StyledForm = styled(Form)`
   display: flex;
   flex-direction: column;
   align-items: center;
+  width: 100%;
+  
+  ${({theme}) => theme.media.tablet} {
+    align-items: flex-start;
+    width: 50%;
+    max-width: available;
+    min-width: 300px;
+  }
+`;
+
+const StyledButton = styled(Button)`
+  max-width: 360px;
+`;
+
+const Row = styled.div`
+  display: flex;
+  align-items: center;
+  margin-bottom: 15px;
+  justify-content: center;
+  width: 100%;
 `;
 
 const validationSchema = yup.object().shape({
@@ -89,13 +108,15 @@ const PasswordForm = (props) => {
                     />
                     <StyledErrorMessage name='verifyPass' component='span'/>
 
-                        <Button
+                    <Row>
+                        <StyledButton
                             isWhite
                             type="submit"
                             disabled={isSubmitting}
                         >
                             Save changes
-                        </Button>
+                        </StyledButton>
+                    </Row>
                 </StyledForm>
             )}
         </Formik>

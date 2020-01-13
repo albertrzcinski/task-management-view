@@ -2,11 +2,34 @@ import React from "react";
 import axios from "axios";
 import {CHANGE_USER_PASS, displayNotification, SAVE_USER} from "../utils/utils";
 import UserForm from "../components/UserForm";
-import CloseMark from "../components/CloseMark";
 import PasswordForm from "../components/PasswordForm";
+import styled from "styled-components";
+
+const AccountWrapper = styled.div`
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  align-items: center;
+  width: 80%;
+ 
+  ${({theme}) => theme.media.tablet} {
+    align-items: flex-start;
+    padding-left: 50px;
+    width: 60%;
+  }
+`;
+
+const H3 = styled.h3`
+  margin-top: 8px;
+  
+  ${({theme}) => theme.media.tablet} {
+    margin-top: 12px;
+  }
+  
+`;
 
 const Account = (props) => {
-    const {user, closeAccount, handleLogout} = props;
+    const {user, handleLogout} = props;
 
     const saveUser = async (values, setSubmitting) => {
        await axios
@@ -60,9 +83,7 @@ const Account = (props) => {
     };
 
   return (
-    <>
-        <CloseMark onClick={closeAccount}/>
-
+    <AccountWrapper>
         <h3>Account</h3>
 
         <UserForm
@@ -70,12 +91,12 @@ const Account = (props) => {
             saveUser={saveUser}
         />
 
-        <h3>Password</h3>
+        <H3>Password</H3>
 
         <PasswordForm
             changePassword={changePassword}
         />
-    </>
+    </AccountWrapper>
   );
 };
 

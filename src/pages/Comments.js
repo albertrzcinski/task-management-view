@@ -11,7 +11,7 @@ const Footer = styled.div`
 
 class Comments extends Component {
     state = {
-      comments: []
+        comments: []
     };
 
     getCommentsByTask = () => {
@@ -52,6 +52,11 @@ class Comments extends Component {
         });
     };
 
+    componentDidUpdate(prevProps, prevState, snapshot) {
+        if(this.props.taskId !== prevProps.taskId) {
+            this.getCommentsByTask();
+        }
+    }
 
     componentDidMount() {
         this.getCommentsByTask();

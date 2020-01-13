@@ -3,10 +3,12 @@ import LoginPage from "./pages/LoginPage";
 import SignUpPage from "./pages/SignUpPage";
 import RecoveryPage from "./pages/RecoveryPage";
 import {BrowserRouter as Router} from "react-router-dom";
-import {Route, Redirect} from "react-router"
+import {Route, Redirect, Switch} from "react-router"
 import axios from "axios";
 import {displayNotification, LOGIN_URL} from "./utils/utils";
 import Dashboard from "./pages/Dashboard";
+import ReactNoticifaction from "react-notifications-component";
+import Page404 from "./pages/Page404";
 
 class App extends Component{
     handleLogout = () => {
@@ -56,24 +58,30 @@ class App extends Component{
   render() {
       return (
       <>
+          <ReactNoticifaction />
           <Router>
-              <Route path="/signUp" component={SignUpPage}/>
-              <Route path="/login">
-                  <LoginPage
-                      loggedIn={this.state.loggedIn}
-                      handleLogin={this.handleLogin}
-                  />
-              </Route>
-              <Route path="/recovery" component={RecoveryPage} />
-              <Route path="/dashboard">
-                  <Dashboard
-                      loggedIn={this.state.loggedIn}
-                      handleLogout={this.handleLogout}
-                  />
-              </Route>
-              <Route exact path="/">
-                  {this.state.loggedIn ? <Redirect to="/dashboard"/> : <Redirect to="/login"/>}
-              </Route>
+              <Switch>
+                  <Route path="/signUp" component={SignUpPage}/>
+                  <Route path="/login">
+                      <LoginPage
+                          loggedIn={this.state.loggedIn}
+                          handleLogin={this.handleLogin}
+                      />
+                  </Route>
+                  <Route path="/recovery" component={RecoveryPage} />
+                  <Route path="/dashboard">
+                      <Dashboard
+                          loggedIn={this.state.loggedIn}
+                          handleLogout={this.handleLogout}
+                      />
+                  </Route>
+                  <Route exact path="/">
+                      {this.state.loggedIn ? <Redirect to="/dashboard"/> : <Redirect to="/login"/>}
+                  </Route>
+                  <Route path="*">
+                      <Page404 />
+                  </Route>
+              </Switch>
           </Router>
       </>
       )

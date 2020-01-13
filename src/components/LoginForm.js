@@ -22,6 +22,10 @@ const StyledErrorMessage = styled(ErrorMessage)`
   margin-top: 2px;
 `;
 
+const StyledForm = styled(Form)`
+  width: 70%; 
+`;
+
 const validationSchema = yup.object().shape({
     username: yup.string()
         .min(5,"This field must be longer")
@@ -62,16 +66,16 @@ const LoginForm = (props) => (
         }
     >
         {({isSubmitting}) => (
-                <Form>
+                <StyledForm>
                     {props.email ?
-                        <>
+                        <FieldWrapper>
                             <FormikField
                                 type="email"
                                 name="email"
                                 placeholder="Enter e-mail"
                             />
                             <StyledErrorMessage name='email' component='div'/>
-                        </>
+                        </FieldWrapper>
                         : null
                     }
 
@@ -111,7 +115,7 @@ const LoginForm = (props) => (
                             </Button>
                         }
                     </ButtonWrapper>
-                </Form>
+                </StyledForm>
         )}
     </Formik>
 );

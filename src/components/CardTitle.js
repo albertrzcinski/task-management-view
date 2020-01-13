@@ -6,6 +6,7 @@ import {IoMdCheckmarkCircleOutline} from "react-icons/io"
 import {MdSettingsBackupRestore} from "react-icons/md"
 import {FaTrashAlt} from "react-icons/fa"
 import {displayNotification} from "../utils/utils";
+
 const StyledWrapper = styled.div`
   margin: 0 20px 0 20px;
 `;
@@ -16,6 +17,10 @@ const P = styled.p`
   align-items: center;
   margin: 0;
   font-size: 1.1em;
+`;
+
+const Span = styled.span`
+  cursor: pointer;
 `;
 
 const IconWrapper = styled.div`
@@ -37,7 +42,8 @@ const sharedCss = css`
   height: 1.7em;
   width: 1.7em;
   opacity: 50%;
-  color: ${({theme}) => theme.color.lightblue}
+  color: ${({theme}) => theme.color.lightblue};
+  cursor: pointer;
   
   :hover {
     opacity: 100%;
@@ -64,7 +70,7 @@ const CardTitle = (props) => {
             <StyledWrapper>
 
                 <P>
-                    <span onClick={onClick}>{title}</span>
+                    <Span onClick={onClick}>{title}</Span>
                     {trash && !tags.length ?
                     <span>
                         <StyledMdSettingsBackupRestore onClick={() => handleComplete(id)}/>

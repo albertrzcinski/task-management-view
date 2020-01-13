@@ -1,14 +1,14 @@
 import React from "react";
 import {ErrorMessage, Form, Formik, Field} from "formik";
 import Button from "./Button";
-import styled from "styled-components";
+import styled, {css} from "styled-components";
 import PhotoField from "./PhotoField";
 import * as yup from "yup";
 
 const StyledField = styled(Field)`
   display: flex;
   flex-direction: column;
-  width: 50vw;
+  width: 100%;
   height: 32px;
   opacity: 60%;
   border: 2px solid ${({theme}) => theme.color.border};
@@ -23,17 +23,25 @@ const StyledField = styled(Field)`
   }
 `;
 
+const StyledForm = styled(Form)`
+  width: 100%;
+  max-width: 750px;
+`;
+
 const Row = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
   margin-bottom: 15px;
+  
+  ${({center}) => center &&
+    css`
+      justify-content: center;
+    `}
 `;
 
 const Column = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+  width: 75%;
 `;
 
 const StyledErrorMessage = styled(ErrorMessage)`
@@ -41,6 +49,10 @@ const StyledErrorMessage = styled(ErrorMessage)`
   font-size: 0.8em;
   padding-left: 5px;
   margin-top: 2px;
+`;
+
+const StyledButton = styled(Button)`
+  max-width: 360px;
 `;
 
 const validationSchema = yup.object().shape({
@@ -79,7 +91,7 @@ const UserForm = (props) => {
                     }}
                 >
                     {({isSubmitting, setFieldValue}) => (
-                        <Form>
+                        <StyledForm>
                             <Row>
                                 <label> E-mail </label>
                                 <Column>
@@ -130,16 +142,16 @@ const UserForm = (props) => {
                                 </Column>
                             </Row>
 
-                            {/*<ButtonWrapper>*/}
-                                <Button
+                            <Row center>
+                                <StyledButton
                                     isWhite
                                     type="submit"
                                     disabled={isSubmitting}
                                 >
                                     Save changes
-                                </Button>
-                            {/*</ButtonWrapper>*/}
-                        </Form>
+                                </StyledButton>
+                            </Row>
+                        </StyledForm>
                     )}
                 </Formik>
             </>

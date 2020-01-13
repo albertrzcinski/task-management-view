@@ -5,24 +5,70 @@ import axios from "axios";
 import {COMPLETE_TASK, DELETE_TASK, displayNotification, TASKS_BY_MEMBER_URL, TASKS_BY_OWNER_URL} from "../utils/utils";
 import {FaSortAlphaDown, FaSortAlphaUp, FaSortNumericDown, FaSortNumericUp} from "react-icons/fa";
 import TaskEdit from "./TaskEdit";
+import posed from "react-pose";
 
 const TitleWrapper = styled.div`
   margin: 10px 0 -5px 0;
-  width: 85vw;
+  width: 85%;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  
-  ${props => props.menuOption === "Edit" || 
-    props.menuOption === "isCollection" ||
-    props.menuOption === "isTags" ||
-    props.menuOption === "isMembers" ?
-    css`
-    display: none;
-    `
-    : null
-    }
 `;
+
+const TasksWrapper = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  width: 90%;
+  margin: 0 auto;
+  
+  ${({theme}) => theme.media.desktop} {
+      justify-content: flex-start;
+      align-items: center;
+      width: 60%;
+      padding-left: 50px;
+      margin: 0;
+  }   
+`;
+
+const TaskEditWrapper = styled.div`
+  position: absolute;
+  left: 0;
+  top: 70px;
+  background-color: silver;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  height: auto;
+  min-height: calc(100vh - 70px);
+  border-radius: 15px;
+  box-shadow: 0 0 10px 0 rgba(0,0,0,0.3);
+  
+  ${({theme}) => theme.media.tablet} {
+      top: 80px;
+      left: 240px;
+      width: calc(100% - 240px);
+  }   
+  
+  ${({theme}) => theme.media.desktop} {
+      top: 150px;
+      left: calc(240px + (100% - 240px)*0.6);
+      width: 30%;
+      min-height: auto;
+      padding-bottom: 20px;
+  }  
+`;
+
+const PosedTaskEditWrapper = posed(TaskEditWrapper)({
+    hidden: {
+        applyAtStart: { display: 'none'},
+        opacity: 0
+    },
+    visible: {
+        applyAtEnd: {display: 'flex'},
+        opacity: 1
+    }
+});
 
 const H3 = styled.h3`
   margin: 0;
@@ -32,6 +78,7 @@ const sharedCss = css`
   padding: 10px;
   height: 2.5em;
   width: 2.5em;
+  cursor: pointer;
 `;
 
 const StyledFaSortNumericDown = styled(FaSortNumericDown)`
@@ -60,7 +107,8 @@ class Tasks extends Component {
             alphaDown: false,
             tasks: [],
             sharedTasks: [],
-            selectedTask: []
+            selectedTask: [],
+            editOption: ''
         };
     }
 
@@ -225,6 +273,12 @@ class Tasks extends Component {
       })
     };
 
+    handleChangeEditOption = (option) => {
+        this.setState({
+            editOption: option
+        })
+    };
+
     componentDidMount() {
         setTimeout(() => {
             this.getTasks();
@@ -240,13 +294,13 @@ class Tasks extends Component {
 
     render() {
         const {menuOption, text, click, handleLogout, userId, isShared, handleChangeIsClick} = this.props;
-        const {tasks, sharedTasks, selectedTask} = this.state;
+        const {tasks, sharedTasks, selectedTask, editOption} = this.state;
 
         //tasks.map(({setOfTasks}) => (console.log(setOfTasks.name)));
 
         return (
             <>
-
+                <TasksWrapper>
                     <TitleWrapper menuOption={menuOption}>
                         <H3> {menuOption} </H3>
                         <div>
@@ -264,10 +318,8 @@ class Tasks extends Component {
                         </div>
                     </TitleWrapper>
 
-                {menuOption !== "Shared" &&
-                    menuOption !== "isCollection" &&
-                    menuOption !== "isTags" &&
-                    menuOption !== "isMembers" ?
+
+                {menuOption !== "Shared" ?
                     tasks.length ?
                         tasks
                             .filter(whichTask)
@@ -300,9 +352,9 @@ class Tasks extends Component {
                                             complete
                                             dependentTask={task.overridingTask}
                                             onClick={() => {
-                                                click("Edit");
                                                 this.setState({
-                                                    selectedTask: task
+                                                    selectedTask: task,
+                                                    editOption: "Edit"
                                                 });
                                             }}
                                         />
@@ -314,10 +366,7 @@ class Tasks extends Component {
                     : null
                 }
 
-                {menuOption === "Shared" &&
-                    menuOption !== "isCollection" &&
-                    menuOption !== "isTags" &&
-                    menuOption !== "isMembers" ?
+                {menuOption === "Shared" ?
                     sharedTasks.length ?
                         sharedTasks
                             .filter(task => task.title.toLowerCase().includes(text.toLowerCase()))
@@ -332,9 +381,9 @@ class Tasks extends Component {
                                         dueDate={task.creationDate}
                                         tags={task.tags}
                                         onClick={() => {
-                                            click("Edit");
                                             this.setState({
-                                                selectedTask: task
+                                                selectedTask: task,
+                                                editOption: "Edit"
                                             });
                                             handleChangeIsClick(true);
                                         }}
@@ -347,24 +396,33 @@ class Tasks extends Component {
                     </h4>
                     : null
                 }
+                </TasksWrapper>
 
-                {menuOption === "Edit" || menuOption === "isCollection" ||
-                    menuOption === "isTags" ||
-                    menuOption === "isMembers" ?
-                    <TaskEdit
-                        selectedTask={selectedTask}
-                        handleChangeSelectedTaskState={this.handleChangeSelectedTaskState}
-                        collections={this.props.collections}
-                        tags={this.props.tags}
-                        menuOption={menuOption}
-                        handleLogout={handleLogout}
-                        reloadTasks={this.getTasks}
-                        userId={userId}
-                        isShared={isShared}
-                        menuClick={click}
-                    />
-                    : null
-                }
+                <PosedTaskEditWrapper pose={editOption === "Edit"|| editOption === "isCollection" ||
+                editOption === "isTags" ||
+                editOption === "isMembers" ? 'visible' : 'hidden'}
+                >
+{/*                <TaskEditWrapper>*/}
+                    {editOption === "Edit" || editOption === "isCollection" ||
+                        editOption === "isTags" ||
+                        editOption === "isMembers" ?
+                        <TaskEdit
+                            selectedTask={selectedTask}
+                            handleChangeSelectedTaskState={this.handleChangeSelectedTaskState}
+                            collections={this.props.collections}
+                            tags={this.props.tags}
+                            menuOption={editOption}
+                            handleLogout={handleLogout}
+                            reloadTasks={this.getTasks}
+                            userId={userId}
+                            isShared={isShared}
+                            menuClick={this.handleChangeEditOption}
+                        />
+                        : null
+                    }
+                {/*</TaskEditWrapper>*/}
+                </PosedTaskEditWrapper>
+
             </>
         );
 

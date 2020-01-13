@@ -1,5 +1,34 @@
 import React, {Component} from "react";
 import CollectionTagsCard from "../components/CollectionTagsCard";
+import styled, {css} from "styled-components";
+
+const CollectionsTagsWrapper = styled.div`
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  align-items: center;
+  width: 80%;
+ 
+  ${({theme}) => theme.media.tablet} {
+    align-items: flex-start;
+    padding-left: 50px;
+    width: 60%;
+  }
+  
+  ${({isCollections, isTags}) => (isCollections || isTags) && 
+    css`
+      ${({theme}) => theme.media.tablet} {
+        align-items: center;
+        padding-left: 0;
+        width: 80%;
+      }
+    `}
+`;
+
+const H3 = styled.h3`
+/*    width: 90%;
+    margin: 1em auto;*/
+`;
 
 class CollectionTags extends Component{
     state = {
@@ -25,9 +54,9 @@ class CollectionTags extends Component{
         const {collections, tags} = this.state;
 
         return (
-            <>
+            <CollectionsTagsWrapper isCollections={isCollections} isTags={isTags}>
                 {menuOption &&
-                    <h3>{menuOption}</h3>
+                    <H3>{menuOption}</H3>
                 }
 
                 {menuOption === "Collections" ?
@@ -172,7 +201,7 @@ class CollectionTags extends Component{
                         </h4>
                         : null
                 }
-            </>
+            </CollectionsTagsWrapper>
 
         );
     }

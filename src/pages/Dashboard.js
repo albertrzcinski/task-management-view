@@ -11,6 +11,7 @@ import ReactNoticifaction from "react-notifications-component";
 import Account from "./Account";
 import CollectionTags from "./CollectionTags";
 import DependentTasks from "./DependentTasks";
+import SideBarD from "./SideBarD";
 
 const DashboardWrapper = styled.div`
   height: auto;
@@ -19,10 +20,14 @@ const DashboardWrapper = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  background-color: ${({theme}) => theme.color.background};
+  background-color: silver;
   border-top-left-radius: 15px;
   border-top-right-radius: 15px;
-
+  
+    ${({theme}) => theme.media.tablet} {
+       width: calc(100% - 240px);
+       align-items: flex-start;
+  }   
 `;
 
 class Dashboard extends Component {
@@ -176,7 +181,6 @@ class Dashboard extends Component {
 
         return (
             <>
-                <ReactNoticifaction />
                 {loggedIn ?
                     <DashboardLayout>
 
@@ -191,8 +195,14 @@ class Dashboard extends Component {
                             collections={collections}
                             tags={tags}
                             handleReloadTasks={this.handleReloadTasks}
+                            photo={user.photo}
                         />
 
+                        <SideBarD
+                            click={this.handleMenuClick}
+                            handleLogout={handleLogout}
+                            displayAccount={this.displayAccount}
+                        />
 
                         <DashboardWrapper>
                             {menuOption !== "Collections" &&
@@ -210,7 +220,8 @@ class Dashboard extends Component {
                                     tags={tags}
                                     isShared={isShared}
                                     handleChangeIsClick={this.handleChangeIsClick}
-                                />}
+                                />
+                                }
                             {menuOption === "Settings" &&
                                 <Account
                                     user={user}
@@ -265,7 +276,6 @@ class Dashboard extends Component {
                                 photo={user.photo}
                             />
                         }
-
                     </DashboardLayout>
                     :
                     <Redirect to="/login" />

@@ -7,7 +7,7 @@ import {displayNotification, MEMBER_ADD_TO_TASK, MEMBER_REMOVE_FROM_TASK} from "
 
 const TaskWrapper = styled.div`
   margin: 10px 0 5px 0;
-  width: 80vw;
+  width: 80%;
   height: auto;
   background-color: ${({theme}) => theme.color.white};
   box-shadow: 0 0 7px 0 rgba(0,0,0,0.2);
@@ -38,7 +38,7 @@ const TaskWrapper = styled.div`
     outline: none;
   }
   
-  :nth-child(2n+1){
+  :nth-child(2n){
     margin: 0;
     box-shadow: 0 2px 7px 0 rgba(0,0,0,0.2);
     outline: none;
@@ -87,7 +87,7 @@ const StyledTaskButton = styled(Button)`
   box-shadow: 0 0 10px 0 rgba(0,0,0,0.2);
   font-size: 0.85em;
   height: 35px;
-  width: 70vw;
+  width: 70%;
 `;
 
 const ButtonsWrapper = styled.div`

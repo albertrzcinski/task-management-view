@@ -29,9 +29,11 @@ const Photo = styled.img`
   border-radius: 50px;
   border: 1px solid ${({theme}) => theme.color.brighterBlue};
   background-size: contain;
-  margin: 20px 0 1.5em 0;
+  margin: 20px auto 1.5em auto;
   width: 55px;
   height: 55px;
+  display: block;
+  
   
   ${({blank}) =>
     blank &&
@@ -54,9 +56,8 @@ const PosedPhoto = posed(Photo)({
 });
 
 const ListWrapper = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+  width: 200px;
+  margin: 0 auto;
 `;
 
 const UL = styled.ul`

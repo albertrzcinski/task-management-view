@@ -21,6 +21,14 @@ const StyledWrapper = styled.div`
   flex-direction: column;
   align-items: center;
   background: ${({theme}) => theme.color.background};
+  
+  ${({theme}) => theme.media.tablet} {
+    width: 500px;
+    height: 600px;
+    margin: 50px auto 0 auto;
+    box-shadow: 0 0 10px 0 rgba(0,0,0,0.3);
+    border-radius: 5px;
+  }
 `;
 
 function LoginLayout({children}) {

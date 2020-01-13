@@ -7,7 +7,7 @@ import LoginLayout from "../layout/LoginLayout";
 import logo from "../logo.svg";
 import styled from "styled-components";
 import axios from "axios";
-import {displayNotification} from "../utils/utils";
+import {CHANGE_EMAIL_PASS, CHANGE_USER_PASS, displayNotification, RESET_PASS} from "../utils/utils";
 import ReactNoticifaction from "react-notifications-component";
 
 const ButtonWrapper = styled.div`
@@ -20,21 +20,38 @@ const StyledErrorMessage = styled(ErrorMessage)`
   padding-left: 5px;
 `;
 
+const StyledForm = styled(Form)`
+  width: 70%;
+`;
+
 const validationSchema = yup.object().shape({
     email: yup.string()
         .email("That doesn't look like a valid email address")
         .required("This field is required")
 });
 
+const resetValidationSchema = yup.object().shape({
+    newPass: yup.string()
+        .min(6,"This field must have a 6 character")
+        .required("This field is required"),
+    verifyPass: yup.string()
+        .min(6,"This field must have a 6 character")
+        .required("This field is required")
+        .oneOf([yup.ref('newPass'), null],"Passwords don't match")
+});
+
 const sendLink = (value, setSubmitting, resetForm) => {
-    //TODO change this post to right
-    axios.post('some url to recovery', {
-        email: value.email
+    axios.post(RESET_PASS, {
+        "email": value.email
     })
         .then(res => {
             if(res.status === 200) {
                 displayNotification("Recovery link was sent. Check your email inbox.", "success");
                 resetForm();
+                setSubmitting(false);
+            }
+            if(res.data.includes("Not")) {
+                displayNotification("Account with this email address doesn't exist.", "warning");
                 setSubmitting(false);
             }
         })
@@ -49,50 +66,139 @@ const sendLink = (value, setSubmitting, resetForm) => {
         });
 };
 
-const RecoveryPage = () => (
-    <>
-    <ReactNoticifaction />
-    <LoginLayout>
-        <Img src={logo} alt="Logo"/>
+const changePasswordByEmail = (email, token, values, setSubmitting) => {
+    axios
+        .post(CHANGE_EMAIL_PASS,
+            {
+                "email": email,
+                "oldPass": values.currentPass,
+                "newPass": values.newPass
+            },
+            {
+                headers: {
+                    "Content-type": "application/json",
+                    "Authorization": token
+                }
+            })
+        .then(res => {
+            if(res.data.includes("updated")) {
+                displayNotification(res.data, "success");
+            }
+            else if(res.data.includes("exist")) {
+                displayNotification(res.data, "warning");
+            }
+            setSubmitting(false);
+        })
+        .catch(err => console.log(err))
+};
 
-        <P>
-            Forgot password ?
-        </P>
-        <p>
-            We'll send a recovery link to
-        </p>
+const RecoveryPage = (props) => {
+    const url = new URL(window.location.href);
+    const email = url.searchParams.get("e");
+    let token = url.searchParams.get("t");
 
-        <Formik
-            initialValues={{email: ''}}
-            validationSchema={validationSchema}
-            onSubmit={(values, {setSubmitting, resetForm}) => {
-                setSubmitting(true);
-                sendLink(values, setSubmitting, resetForm);
-            }}
-        >
-            {({isSubmitting}) => (
-                <Form>
-                    <FormikField
-                        type="email"
-                        name="email"
-                        placeholder="Enter e-mail "
-                    />
-                    <StyledErrorMessage name="email" component="div" />
+    if(email !== null && token !== null){
+        token = `Bearer ${token}`;
+        return (
+            <>
+                <LoginLayout>
+                    <Img src={logo} alt="Logo"/>
+
+                    <P>
+                        Reset your password
+                    </P>
 
                     <ButtonWrapper/>
-                        <Button type="submit" disabled={isSubmitting}>
-                            Send recovery link
-                        </Button>
-                    <ButtonWrapper/>
-                </Form>
-            )}
-        </Formik>
+                    <Formik
+                        initialValues={{
+                            newPass: '',
+                            verifyPass: ''
+                        }}
+                        validationSchema={resetValidationSchema}
+                        onSubmit={(values, {setSubmitting, resetForm}) => {
+                            setSubmitting(true);
+                            changePasswordByEmail(email, token, values, setSubmitting);
+                            resetForm();
+                            setTimeout(() => {
+                                props.history.push("/")
+                            }, 2000);
+                        }}
+                    >
+                        {({isSubmitting}) => (
+                            <StyledForm>
+                                <FormikField
+                                    type="password"
+                                    name="newPass"
+                                    placeholder="New password"
+                                />
+                                <StyledErrorMessage name="newPass" component="div"/>
 
-        <HR/>
+                                <ButtonWrapper/>
+                                <FormikField
+                                    type="password"
+                                    name="verifyPass"
+                                    placeholder="Verify password"
+                                />
+                                <StyledErrorMessage name="verifyPass" component="div"/>
 
-        <StyledLink to="/login">Return to log in</StyledLink>
-    </LoginLayout>
-    </>
-);
+                                <ButtonWrapper/>
+                                <Button type="submit" disabled={isSubmitting}>
+                                    Save changes
+                                </Button>
+                                <ButtonWrapper/>
+                            </StyledForm>
+                        )}
+                    </Formik>
+                </LoginLayout>
+            </>
+        )
+    }
+    else {
+        return (
+            <>
+            <LoginLayout>
+                <Img src={logo} alt="Logo"/>
+
+                <P>
+                    Forgot password ?
+                </P>
+                <p>
+                    We'll send a recovery link to
+                </p>
+
+                <Formik
+                    initialValues={{email: ''}}
+                    validationSchema={validationSchema}
+                    onSubmit={(values, {setSubmitting, resetForm}) => {
+                        setSubmitting(true);
+                        sendLink(values, setSubmitting, resetForm);
+                    }}
+                >
+                    {({isSubmitting}) => (
+                        <StyledForm>
+                            <FormikField
+                                type="email"
+                                name="email"
+                                placeholder="Enter e-mail "
+                            />
+                            <StyledErrorMessage name="email" component="div"/>
+
+                            <ButtonWrapper/>
+                            <Button type="submit" disabled={isSubmitting}>
+                                Send recovery link
+                            </Button>
+                            <ButtonWrapper/>
+                        </StyledForm>
+                    )}
+                </Formik>
+
+                <HR/>
+
+                <StyledLink to="/login">Return to log in</StyledLink>
+            </LoginLayout>
+            </>
+        )
+    }
+};
 
 export default RecoveryPage;

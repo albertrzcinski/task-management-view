@@ -14,7 +14,7 @@ import {
 
 const TaskWrapper = styled.div`
   margin: 10px 0 5px 0;
-  width: 80vw;
+  width: 100%;
   height: auto;
   background-color: ${({theme}) => theme.color.white};
   box-shadow: 0 0 7px 0 rgba(0,0,0,0.2);
@@ -52,6 +52,10 @@ const TaskWrapper = styled.div`
     border: 1px solid cornflowerblue;
     border-top: none;
   }
+  
+    ${({theme}) => theme.media.desktop} {
+    width: 70%;
+  }
 `;
 
 const P = styled.p`
@@ -81,12 +85,12 @@ const sharedCss = css`
 `;
 
 const StyledTaskButton = styled(Button)`
-  width: 70vw;
+  width: 70%;
   ${sharedCss}
 `;
 
 const StyledButton = styled(Button)`
-  width: 100px;
+  width: 40%;
   ${sharedCss} 
 `;
 
@@ -135,7 +139,7 @@ class CollectionTagsCard extends Component {
                         }
                     })
                 .then(() => {
-                    displayNotification("Deleted.", "danger");
+                    displayNotification("Collection has been deleted.", "danger");
                     this.props.getData(this.props.menuOption);
                 })
                 .catch(err => {
@@ -148,7 +152,7 @@ class CollectionTagsCard extends Component {
                     }
                 });
         }
-        else {
+        else if(type === "Tags") {
             axios
                 .delete(DELETE_TAG,
                     {
@@ -161,7 +165,7 @@ class CollectionTagsCard extends Component {
                         }
                     })
                 .then(() => {
-                    displayNotification("Deleted.", "danger");
+                    displayNotification("Tag has been deleted.", "danger");
                     this.props.getData(this.props.menuOption);
                 })
                 .catch(err => {

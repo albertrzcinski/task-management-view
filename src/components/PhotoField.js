@@ -7,7 +7,6 @@ const PhotoWrapper = styled.div`
   flex-direction: row;
   align-items: center;
   justify-content: space-between;
-  width: 50vw;
 `;
 
 const Photo = styled.img`
@@ -19,7 +18,7 @@ const Photo = styled.img`
 `;
 
 const StyledButton = styled(Button)`
-  width: 30vw;
+  width: 60%;
   height: 40px;
   font-size: .8em;
   opacity: 60%;

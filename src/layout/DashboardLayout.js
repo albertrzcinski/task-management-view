@@ -17,8 +17,8 @@ const GlobalStyle = createGlobalStyle`
 
 const StyledWrapper = styled.div`
   height: auto;
-  //display: flex;
-  //flex-direction: column;
+  display: flex;
+  flex-wrap: wrap;
   background: ${({theme}) => theme.color.blue};
 `;
 

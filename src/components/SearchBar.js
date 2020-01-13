@@ -9,6 +9,10 @@ const SearchWrapper = styled.div`
   background-color: ${({theme}) => theme.color.search};
   opacity: 90%;
   border-radius: 5px;
+  
+  ${({theme}) => theme.media.tablet} {
+    height: 35px;
+  }
 `;
 
 const StyledInput = styled.input`

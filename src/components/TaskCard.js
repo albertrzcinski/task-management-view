@@ -9,16 +9,30 @@ import {displayNotification} from "../utils/utils";
 
 const TaskWrapper = styled.div`
   margin: 20px 0 20px 0;
-  width: 80vw;
+  width: 80%;
   height: auto;
   background-color: ${({theme}) => theme.color.white};
   box-shadow: 0 0 10px 0 rgba(0,0,0,0.3);
   border-radius: 5px;
-  cursor: pointer;
   
    &:hover{
     border: 1px solid cornflowerblue;
   }
+  
+  ${({theme}) => theme.media.desktop} {
+       width: 40%;
+       margin: 20px 50px 20px 0;
+  }   
+  
+  ${({isDependent}) => isDependent &&
+    css`
+    width: 100%;
+    
+    ${({theme}) => theme.media.desktop} {
+      width: 100%;
+  `}
+  
+} 
 `;
 
 const TopWrapper = styled.div`
@@ -55,6 +69,7 @@ const sharedCss = css`
   width: 1.9em;
   opacity: 50%;
   color: ${({theme}) => theme.color.lightblue}
+  cursor: pointer;
   
   :hover {
     opacity: 100%;
@@ -74,11 +89,11 @@ const StyledMdSettingsBackupRestore = styled(MdSettingsBackupRestore)`
 `;
 
 const TaskCard = (props) => {
-    const {id, desc, trash, complete, title, dueDate, tags, handleComplete, handleDelete, onClick, dependentTask} = props;
+    const {id, desc, trash, complete, title, dueDate, tags, handleComplete, handleDelete, onClick, dependentTask, isDependent} = props;
 
     return (
             <>
-                    <TaskWrapper>
+                    <TaskWrapper isDependent={isDependent}>
                         <TopWrapper>
                             <TagWrapper>
                                 {tags.map((tag) => (

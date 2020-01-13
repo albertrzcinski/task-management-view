@@ -18,11 +18,9 @@ import {
 import Members from "./Members";
 import Comments from "./Comments";
 
-/*const TitleWrapper =styled.div`
-  display: flex;
-  flex-direction: column;
-  width: 65vw;
-`;*/
+const TitleWrapper = styled.div`
+  text-align: center;
+`;
 
 const P = styled.p`
   font-size: 1.2em;
@@ -40,17 +38,14 @@ const Span = styled.span`
 `;
 
 const Wrapper = styled.div`
-  display: flex;
-  flex-direction: column;
-  width: 75vw;
-  margin-top: -5px;
+  width: 90%;
+  margin: -5px auto 20px auto;
 `;
 
 const TagWrapper = styled.div`
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
-  width: 80vw;
 `;
 
 const Photo = styled.img`
@@ -120,7 +115,8 @@ const Ol = styled.ol`
 `;
 
 const Additions = styled.div`
-  margin-top: 10px;
+  margin: 10px auto 0 auto;
+  width: 90%;
   
   & > * {
     margin-bottom: 10px;
@@ -300,7 +296,7 @@ class TaskEdit extends Component {
     render() {
         const {selectedTask, desc} = this.state;
 
-        const {isShared, menuOption} = this.props;
+        const {isShared, menuOption, menuClick} = this.props;
          //console.log(selectedTask);
 /*        const hours = dueDate.getHours() < 10 ? `${dueDate.getHours()}0` : dueDate.getHours();
         const minutes = dueDate.getMinutes() < 10 ? `${dueDate.getMinutes()}0` : dueDate.getMinutes();
@@ -315,238 +311,243 @@ class TaskEdit extends Component {
 
         return (
             <>
-                {menuOption !== "isCollection"  &&
-                    menuOption !== "isTags" &&
-                    menuOption !== "isMembers" &&
                     <>
-                    {/*
-                    //TODO add on desktop
-                    <CloseMark/>*/}
+                        {menuOption !== "isCollection" &&
+                        menuOption !== "isTags" &&
+                        menuOption !== "isMembers" &&
+                        <>
 
-                        {!isShared ?
-                            <div
-                                onBlur={() => {
-                                    this.saveTitle();
-                                }}
-                            >
-                                <TitleContentEditable
-                                    innerRef={this.title}
-                                    html={selectedTask.title}
-                                    disabled={false}
-                                    onChange={this.handleChangeTitle}
-                                />
-                            </div>
-                            :
-                            <TitleContentEditable
-                                innerRef={this.title}
-                                html={selectedTask.title}
-                                disabled={true}
-                            />
-                        }
+                        <CloseMark onClick={() => menuClick('')}/>
 
-                        <Span>collection <b>{selectedTask.setOfTasks.name}</b></Span>
-
-
-                    <Wrapper>
-                        {selectedTask.tags.length ?
-                            <>
-                            <P> Tags </P>
-                            <TagWrapper>
-                                {selectedTask.tags.map((tag) => (
-                                    <Tag isBig key={tag.id} name={tag.name}/>
-                                ))}
-                            </TagWrapper>
-                            </>
-                            : null
-                        }
-
-                        {selectedTask.members.length ?
-                            <>
-                            <P members> Members </P>
-                            <TagWrapper>
-                                {selectedTask.members.map(({id, photo, username}) => (
-                                    <Photo
-                                        key={id}
-                                        src={photo ?
-                                            `data:image/*.*;base64,${photo}`
-                                            : 'data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs%3D'}
-                                        alt={username}
-                                        title={username}
-                                    />
-                                ))}
-                            </TagWrapper>
-                            </>
-                            : null
-                        }
-
-                        {selectedTask.dueDate &&
-                            <>
-
-                                <P> Due </P>
-
-                                <Row>
-                                    {!isShared ?
-                                        <>
-                                        <StyledDatePicker
-                                            selected={new Date(selectedTask.dueDate)}
-                                            onChange={this.handleChangeDate}
-                                            dateFormat="d MMMM, yyyy  'at'  HH:mm"
-                                            timeFormat="HH:mm"
-                                            showTimeSelect
-                                            timeIntervals={15}
-                                        />
-                                        <CloseMark
-                                            due
-                                            onClick={() => {
-                                                const {selectedTask} = this.state;
-                                                selectedTask.dueDate = null;
-                                                this.setState({
-                                                    selectedTask: selectedTask
-                                                });
-                                                this.saveDate();
-                                            }}
-                                        />
-                                        </>
-                                        :
-                                        <StyledDatePicker
-                                            selected={new Date(selectedTask.dueDate)}
-                                            dateFormat="d MMMM, yyyy  'at'  HH:mm"
-                                            disabled={true}
-                                        />
-                                    }
-                                </Row>
-                            </>
-                        }
-
-
-                        {!isShared &&
-                            <>
-                                <P> Description </P>
-                                <div
+                            {!isShared ?
+                                <TitleWrapper
                                     onBlur={() => {
-                                        this.saveDescription();
+                                        this.saveTitle();
                                     }}
                                 >
-                                    <StyledContentEditable
-                                        innerRef={this.editable}
-                                        html={selectedTask.description === null ? desc : selectedTask.description}
+                                    <TitleContentEditable
+                                        innerRef={this.title}
+                                        html={selectedTask.title}
                                         disabled={false}
-                                        onChange={this.handleChangeDesc}
+                                        onChange={this.handleChangeTitle}
                                     />
-                                </div>
-                            </>
-                        }
-                        {isShared && selectedTask.description !== null &&
-                            <>
-                                <P> Description </P>
-                                <StyledContentEditable
-                                    innerRef={this.editable}
-                                    html={selectedTask.description}
-                                    disabled={true}
-                                />
-                            </>
-                        }
 
-                        {selectedTask.overridingTask &&
-                            <>
-                                <P> Dependent Tasks </P>
-                                <Ol>
-                                    {list}
-                                </Ol>
-                            </>
-                        }
+                                    <Span>collection <b>{selectedTask.setOfTasks.name}</b></Span>
+                                </TitleWrapper>
+                                :
+                                <TitleWrapper>
+                                    <TitleContentEditable
+                                        innerRef={this.title}
+                                        html={selectedTask.title}
+                                        disabled={true}
+                                    />
+                                    <Span>collection <b>{selectedTask.setOfTasks.name}</b></Span>
+                                </TitleWrapper>
+                            }
 
 
-                        {!isShared &&
-                            <Additions>
-                                {!selectedTask.dueDate &&
-                                <Button
-                                    isWhite
-                                    onClick={() => {
-                                        const {selectedTask} = this.state;
-                                        selectedTask.dueDate = new Date().toJSON();
-                                        this.setState({
-                                            selectedTask: selectedTask
-                                        })
-                                    }}
-                                >
-                                    Due date
-                                </Button>
+                            <Wrapper>
+                                {selectedTask.tags.length ?
+                                    <>
+                                        <P> Tags </P>
+                                        <TagWrapper>
+                                            {selectedTask.tags.map((tag) => (
+                                                <Tag isBig key={tag.id} name={tag.name}/>
+                                            ))}
+                                        </TagWrapper>
+                                    </>
+                                    : null
                                 }
 
-                                <Button
-                                    isWhite
-                                    onClick={() => this.props.menuClick("isTags")}
-                                >
-                                    Tags
-                                </Button>
+                                {selectedTask.members.length ?
+                                    <>
+                                        <P members> Members </P>
+                                        <TagWrapper>
+                                            {selectedTask.members.map(({id, photo, username}) => (
+                                                <Photo
+                                                    key={id}
+                                                    src={photo ?
+                                                        `data:image/*.*;base64,${photo}`
+                                                        : 'data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs%3D'}
+                                                    alt={username}
+                                                    title={username}
+                                                />
+                                            ))}
+                                        </TagWrapper>
+                                    </>
+                                    : null
+                                }
 
-                                <Button
-                                    isWhite
-                                    onClick={() => this.props.menuClick("isMembers")}
-                                >
-                                    Members
-                                </Button>
+                                {selectedTask.dueDate &&
+                                <>
 
-                                <Button
-                                    isWhite
-                                    onClick={() => this.props.menuClick("isCollection")}
-                                >
-                                    Move to...
-                                </Button>
+                                    <P> Due </P>
 
-                                <Button
-                                    isWhite
-                                    onClick={() => this.handleDeleteDependentTask()}
-                                >
-                                    Delete dependent tasks
-                                </Button>
+                                    <Row>
+                                        {!isShared ?
+                                            <>
+                                                <StyledDatePicker
+                                                    selected={new Date(selectedTask.dueDate)}
+                                                    onChange={this.handleChangeDate}
+                                                    dateFormat="d MMMM, yyyy  'at'  HH:mm"
+                                                    timeFormat="HH:mm"
+                                                    showTimeSelect
+                                                    timeIntervals={15}
+                                                />
+                                                <CloseMark
+                                                    due
+                                                    onClick={() => {
+                                                        const {selectedTask} = this.state;
+                                                        selectedTask.dueDate = null;
+                                                        this.setState({
+                                                            selectedTask: selectedTask
+                                                        });
+                                                        this.saveDate();
+                                                    }}
+                                                />
+                                            </>
+                                            :
+                                            <StyledDatePicker
+                                                selected={new Date(selectedTask.dueDate)}
+                                                dateFormat="d MMMM, yyyy  'at'  HH:mm"
+                                                disabled={true}
+                                            />
+                                        }
+                                    </Row>
+                                </>
+                                }
 
-                            </Additions>
+
+                                {!isShared &&
+                                <>
+                                    <P> Description </P>
+                                    <div
+                                        onBlur={() => {
+                                            this.saveDescription();
+                                        }}
+                                    >
+                                        <StyledContentEditable
+                                            innerRef={this.editable}
+                                            html={selectedTask.description === null ? desc : selectedTask.description}
+                                            disabled={false}
+                                            onChange={this.handleChangeDesc}
+                                        />
+                                    </div>
+                                </>
+                                }
+                                {isShared && selectedTask.description !== null &&
+                                <>
+                                    <P> Description </P>
+                                    <StyledContentEditable
+                                        innerRef={this.editable}
+                                        html={selectedTask.description}
+                                        disabled={true}
+                                    />
+                                </>
+                                }
+
+                                {selectedTask.overridingTask &&
+                                <>
+                                    <P> Dependent Tasks </P>
+                                    <Ol>
+                                        {list}
+                                    </Ol>
+                                </>
+                                }
+
+
+                                {!isShared &&
+                                <Additions>
+                                    {!selectedTask.dueDate &&
+                                    <Button
+                                        isWhite
+                                        onClick={() => {
+                                            const {selectedTask} = this.state;
+                                            selectedTask.dueDate = new Date().toJSON();
+                                            this.setState({
+                                                selectedTask: selectedTask
+                                            })
+                                        }}
+                                    >
+                                        Due date
+                                    </Button>
+                                    }
+
+                                    <Button
+                                        isWhite
+                                        onClick={() => this.props.menuClick("isTags")}
+                                    >
+                                        Tags
+                                    </Button>
+
+                                    <Button
+                                        isWhite
+                                        onClick={() => this.props.menuClick("isMembers")}
+                                    >
+                                        Members
+                                    </Button>
+
+                                    <Button
+                                        isWhite
+                                        onClick={() => this.props.menuClick("isCollection")}
+                                    >
+                                        Move to...
+                                    </Button>
+
+                                    {selectedTask.overridingTask &&
+                                    <Button
+                                        isWhite
+                                        onClick={() => this.handleDeleteDependentTask()}
+                                    >
+                                        Delete dependent tasks
+                                    </Button>
+                                    }
+                                </Additions>
+                                }
+
+                                <P> Comments </P>
+                                <Comments
+                                    taskId={selectedTask.id}
+                                    userId={this.props.userId}
+                                    handleLogout={this.props.handleLogout}
+                                />
+
+                            </Wrapper>
+                        </>
                         }
 
-                        <P> Comments </P>
-                        <Comments
-                            taskId={selectedTask.id}
-                            userId={this.props.userId}
+                        {menuOption === "isTags" &&
+                        <CollectionTags
+                            isTags
+                            tags={this.props.tags}
+                            selectedTask={selectedTask}
                             handleLogout={this.props.handleLogout}
+                            reloadTasks={this.props.reloadTasks}
+                            menuClick={this.props.menuClick}
                         />
+                        }
 
-                    </Wrapper>
+                        {menuOption === "isCollection" &&
+                        <CollectionTags
+                            isCollections
+                            collections={this.props.collections}
+                            selectedTask={selectedTask}
+                            handleLogout={this.props.handleLogout}
+                            reloadTasks={this.props.reloadTasks}
+                            menuClick={this.props.menuClick}
+                        />
+                        }
+
+                        {menuOption === "isMembers" &&
+                        <Members
+                            selectedTask={selectedTask}
+                            handleLogout={this.props.handleLogout}
+                            reloadTasks={this.props.reloadTasks}
+                            userId={this.props.userId}
+                            menuClick={this.props.menuClick}
+                        />
+                        }
                     </>
-                }
-
-                {menuOption === "isTags" &&
-                    <CollectionTags
-                        isTags
-                        tags={this.props.tags}
-                        selectedTask={selectedTask}
-                        handleLogout={this.props.handleLogout}
-                        reloadTasks={this.props.reloadTasks}
-                        menuClick={this.props.menuClick}
-                    />
-                }
-
-                {menuOption === "isCollection" &&
-                    <CollectionTags
-                        isCollections
-                        collections={this.props.collections}
-                        selectedTask={selectedTask}
-                        handleLogout={this.props.handleLogout}
-                        reloadTasks={this.props.reloadTasks}
-                        menuClick={this.props.menuClick}
-                    />
-                }
-
-                {menuOption === "isMembers" &&
-                    <Members
-                        selectedTask={selectedTask}
-                        handleLogout={this.props.handleLogout}
-                        reloadTasks={this.props.reloadTasks}
-                        userId={this.props.userId}
-                        menuClick={this.props.menuClick}
-                    />
-                }
             </>
         );
     }
