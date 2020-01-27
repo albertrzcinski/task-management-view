@@ -12,8 +12,7 @@ import {
     CHANGE_DATE,
     CHANGE_DESCRIPTION,
     CHANGE_TITLE,
-    DELETE_DEPENDENT_TASKS,
-    displayNotification
+    DELETE_DEPENDENT_TASKS
 } from "../utils/utils";
 import Members from "./Members";
 import Comments from "./Comments";
@@ -132,7 +131,6 @@ class TaskEdit extends Component {
         this.title = React.createRef();
         this.state = {
             selectedTask: this.props.selectedTask,
-            // oldSelectedTask: '',
             desc: 'Add a more detailed description...'
         };
     }
@@ -142,31 +140,7 @@ class TaskEdit extends Component {
             this.setState({
                 selectedTask: this.props.selectedTask
             });
-        // console.log(prevProps.selectedTask);
     }
-/*
-    componentWillUnmount() {
-        const {selectedTask, oldSelectedTask} = this.state;
-        if(selectedTask.description !== oldSelectedTask.description){
-            selectedTask.description = oldSelectedTask.description;
-            this.props.handleChangeSelectedTaskState(selectedTask)
-        }
-
-        console.log(selectedTask.dueDate);
-        console.log(oldSelectedTask.dueDate);
-
-        if(selectedTask.dueDate !== oldSelectedTask.dueDate){
-            selectedTask.dueDate = oldSelectedTask.dueDate;
-            this.props.handleChangeSelectedTaskState(selectedTask)
-        }
-    }
-
-    componentDidMount() {
-        let selectedTask = this.state.selectedTask;
-        this.setState({
-            oldSelectedTask: selectedTask
-        })
-    }*/
 
     handleChangeTitle = (e) => {
         const {selectedTask} = this.state;
@@ -210,7 +184,6 @@ class TaskEdit extends Component {
                     }
                 })
             .then(() => {
-                // displayNotification("Description changed.", "success");
                 this.props.reloadTasks();
             })
             .catch(err => {
@@ -232,7 +205,6 @@ class TaskEdit extends Component {
                     }
                 })
             .then(() => {
-                // displayNotification("Title changed.", "success");
                 this.props.reloadTasks();
             })
             .catch(err => {
@@ -254,7 +226,6 @@ class TaskEdit extends Component {
                     }
                 })
             .then(() => {
-                // displayNotification("Title changed.", "success");
                 this.props.reloadTasks();
             })
             .catch(err => {
@@ -297,10 +268,6 @@ class TaskEdit extends Component {
         const {selectedTask, desc} = this.state;
 
         const {isShared, menuOption, menuClick} = this.props;
-         //console.log(selectedTask);
-/*        const hours = dueDate.getHours() < 10 ? `${dueDate.getHours()}0` : dueDate.getHours();
-        const minutes = dueDate.getMinutes() < 10 ? `${dueDate.getMinutes()}0` : dueDate.getMinutes();
-        const due = `${dueDate.toDateString()} at ${hours}:${minutes}`;*/
         let dependent = selectedTask;
         const list = [];
 

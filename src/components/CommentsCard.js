@@ -186,8 +186,6 @@ class CommentsCard extends Component {
                             isEdit
                             onClick={() => {
                                 this.toggleIsDisabled();
-                                //TODO nie działa
-                                this.editable.current.focus();
                             }}
                         >
                             Edit

@@ -25,11 +25,6 @@ const CollectionsTagsWrapper = styled.div`
     `}
 `;
 
-const H3 = styled.h3`
-/*    width: 90%;
-    margin: 1em auto;*/
-`;
-
 class CollectionTags extends Component{
     state = {
         collections: this.props.collections,
@@ -56,7 +51,7 @@ class CollectionTags extends Component{
         return (
             <CollectionsTagsWrapper isCollections={isCollections} isTags={isTags}>
                 {menuOption &&
-                    <H3>{menuOption}</H3>
+                    <h3>{menuOption}</h3>
                 }
 
                 {menuOption === "Collections" ?

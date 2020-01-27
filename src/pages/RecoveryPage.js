@@ -7,7 +7,7 @@ import LoginLayout from "../layout/LoginLayout";
 import logo from "../logo.svg";
 import styled from "styled-components";
 import axios from "axios";
-import {CHANGE_EMAIL_PASS, CHANGE_USER_PASS, displayNotification, RESET_PASS} from "../utils/utils";
+import {CHANGE_EMAIL_PASS, displayNotification, RESET_PASS} from "../utils/utils";
 import ReactNoticifaction from "react-notifications-component";
 
 const ButtonWrapper = styled.div`
@@ -46,13 +46,15 @@ const sendLink = (value, setSubmitting, resetForm) => {
     })
         .then(res => {
             if(res.status === 200) {
-                displayNotification("Recovery link was sent. Check your email inbox.", "success");
-                resetForm();
-                setSubmitting(false);
-            }
-            if(res.data.includes("Not")) {
-                displayNotification("Account with this email address doesn't exist.", "warning");
-                setSubmitting(false);
+                if(res.data.includes("Not")) {
+                    displayNotification("Account with this email address doesn't exist.", "warning");
+                    setSubmitting(false);
+                }
+                else {
+                    displayNotification("Recovery link was sent. Check your email inbox.", "success");
+                    resetForm();
+                    setSubmitting(false);
+                }
             }
         })
         .catch(err => {
@@ -101,6 +103,7 @@ const RecoveryPage = (props) => {
         token = `Bearer ${token}`;
         return (
             <>
+                <ReactNoticifaction/>
                 <LoginLayout>
                     <Img src={logo} alt="Logo"/>
 

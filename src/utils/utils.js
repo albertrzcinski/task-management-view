@@ -45,8 +45,6 @@ export const DELETE_COMMENTS = URL+`comments/delete`;
 export const ADD_DEPENDENT_TASK = URL+`tasks/addDependentTask`;
 export const DELETE_DEPENDENT_TASKS = URL+`tasks/deleteDependentTasks`;
 
-// export const ALL_USERS_URL = URL+`users/all`;
-
 export const displayNotification = (message, type) => {
     store.addNotification({
         message: message,

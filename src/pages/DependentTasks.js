@@ -24,7 +24,6 @@ const TasksWrapper = styled.div`
   ${({theme}) => theme.media.desktop} {
       justify-content: flex-start;
       align-items: center;
-      /*flex-flow: column wrap;*/
       width: 60%;
       padding-left: 50px;
       margin: 0;
@@ -139,10 +138,8 @@ class DependentTasks extends Component {
     componentDidMount() {
         setTimeout(() => {
             this.getTasks();
-        },100);
+        },500);
     }
-
-
 
     render() {
         const {tasks, isAdd, click} = this.state;
@@ -233,8 +230,7 @@ class DependentTasks extends Component {
                                         id={task.id}
                                         title={task.title}
                                         desc={task.description}
-                                        //TODO change due date
-                                        dueDate={task.creationDate}
+                                        creationDate={task.creationDate}
                                         tags={task.tags}
                                     />
                                     <DigitDiv number={click}/>

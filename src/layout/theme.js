@@ -6,9 +6,9 @@ export const theme = {
     color: {
         green: 'rgba(48,167,26,0.91)',
         blue: '#6684EC',
-        brighterBlue: '#b7d4ff',//'#86a8e4',
-        lightblue: '#93B5EF',//'#86a8e4',
-        background: '#F7FAFF',//'#211a0f'
+        brighterBlue: '#b7d4ff',
+        lightblue: '#93B5EF',
+        background: '#F7FAFF',
         white: "#fdfdfd",
         text: '#7D7D7D',
         border: "#b3b3b3",
@@ -25,8 +25,6 @@ export const theme = {
 };
 
 export const FormikField = styled(Field)`
-  //display: flex;
-  //flex-direction: column;
   width: 100%;
   height: 40px;
   opacity: 60%;

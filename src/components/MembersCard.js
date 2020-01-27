@@ -3,7 +3,7 @@ import styled, {css} from "styled-components";
 import posed from "react-pose";
 import Button from "./Button";
 import axios from "axios";
-import {displayNotification, MEMBER_ADD_TO_TASK, MEMBER_REMOVE_FROM_TASK} from "../utils/utils";
+import {MEMBER_ADD_TO_TASK, MEMBER_REMOVE_FROM_TASK} from "../utils/utils";
 
 const TaskWrapper = styled.div`
   margin: 10px 0 5px 0;
@@ -118,7 +118,6 @@ class MembersCard extends Component {
                     }
                 })
             .then(() => {
-                //displayNotification("Member removed.", "danger");
                 this.props.reloadTasks();
             })
             .catch(err => {
@@ -140,7 +139,6 @@ class MembersCard extends Component {
                     }
                 })
             .then(() => {
-                //displayNotification("Member added.", "success");
                 this.props.reloadTasks();
             })
             .catch(err => {

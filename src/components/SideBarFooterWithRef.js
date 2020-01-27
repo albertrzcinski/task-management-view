@@ -35,7 +35,7 @@ const Wrapper = styled.div`
   
   ${({theme}) => theme.media.tablet} {
         padding-left: 40px;
-        margin-top: 200px;
+        margin-top: 100px;
   }   
 `;
 

@@ -89,7 +89,7 @@ const StyledMdSettingsBackupRestore = styled(MdSettingsBackupRestore)`
 `;
 
 const TaskCard = (props) => {
-    const {id, desc, trash, complete, title, dueDate, tags, handleComplete, handleDelete, onClick, dependentTask, isDependent} = props;
+    const {id, desc, trash, complete, title, creationDate, tags, handleComplete, handleDelete, onClick, dependentTask, isDependent} = props;
 
     return (
             <>
@@ -121,7 +121,7 @@ const TaskCard = (props) => {
 
                         <CardTitle
                             title={title}
-                            dueDate={dueDate}
+                            creationDate={creationDate}
                             tags={tags}
                             complete={complete}
                             trash={trash}

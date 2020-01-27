@@ -99,8 +99,6 @@ class Members extends Component{
                                     username={username}
                                     firstName={firstName}
                                     lastName={lastName}
-                                    //click={click}
-                                    //menuOption={menuOption}
                                     handleLogout={handleLogout}
                                     selectedTaskId={selectedTask.id}
                                     reloadTasks={reloadTasks}

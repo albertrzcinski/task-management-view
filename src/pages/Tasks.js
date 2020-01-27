@@ -35,7 +35,7 @@ const TaskEditWrapper = styled.div`
   position: absolute;
   left: 0;
   top: 70px;
-  background-color: silver;
+  background-color: ${({theme}) => theme.color.background};
   flex-direction: column;
   align-items: center;
   width: 100%;
@@ -102,6 +102,7 @@ const StyledFaSortAlphaUp = styled(FaSortAlphaUp)`
 class Tasks extends Component {
     constructor(props) {
         super(props);
+        this.wrapperRef = React.createRef();
         this.state = {
             numericDown: true,
             alphaDown: false,
@@ -191,7 +192,7 @@ class Tasks extends Component {
                     "Authorization": localStorage.getItem('token')
                 }
             })
-            .then(async res => {
+            .then(res => {
                 if(menuOption === "Shared") {
                     this.setState({
                         sharedTasks: res.data
@@ -200,9 +201,9 @@ class Tasks extends Component {
                 else {
                     this.setState({
                         tasks: res.data
-                    });
+                        });
 
-                    await this.toggleNumeric(true);
+                    this.toggleNumeric(true);
 
 
                     if(this.state.selectedTask !== undefined && Object.keys(this.state.selectedTask).length > 0) {
@@ -290,13 +291,20 @@ class Tasks extends Component {
             && this.props.menuOption === "Shared"
             && this.state.sharedTasks.length < 1)
             this.getTasks(this.props.menuOption);
+
+        setTimeout(() => {
+            if(this.wrapperRef.current) {
+                const clientHeight = this.wrapperRef.current.clientHeight;
+                if((this.props.getDashboardHeight() < clientHeight) && clientHeight > 1) {
+                    this.props.handleChangeHeight(clientHeight);
+                }
+            }
+        }, 500)
     }
 
     render() {
-        const {menuOption, text, click, handleLogout, userId, isShared, handleChangeIsClick} = this.props;
+        const {menuOption, text, handleLogout, userId, isShared, handleChangeIsClick} = this.props;
         const {tasks, sharedTasks, selectedTask, editOption} = this.state;
-
-        //tasks.map(({setOfTasks}) => (console.log(setOfTasks.name)));
 
         return (
             <>
@@ -332,8 +340,7 @@ class Tasks extends Component {
                                             id={task.id}
                                             title={task.title}
                                             desc={task.description}
-                                            //TODO change due date
-                                            dueDate={task.creationDate}
+                                            creationDate={task.creationDate}
                                             tags={task.tags}
                                             trash
                                             handleDelete={this.handleDelete}
@@ -345,8 +352,7 @@ class Tasks extends Component {
                                             id={task.id}
                                             title={task.title}
                                             desc={task.description}
-                                            //TODO change due date
-                                            dueDate={task.creationDate}
+                                            creationDate={task.creationDate}
                                             tags={task.tags}
                                             handleComplete={this.handleComplete}
                                             complete
@@ -377,8 +383,7 @@ class Tasks extends Component {
                                         id={task.id}
                                         title={task.title}
                                         desc={task.description}
-                                        //TODO change due date
-                                        dueDate={task.creationDate}
+                                        creationDate={task.creationDate}
                                         tags={task.tags}
                                         onClick={() => {
                                             this.setState({
@@ -401,8 +406,8 @@ class Tasks extends Component {
                 <PosedTaskEditWrapper pose={editOption === "Edit"|| editOption === "isCollection" ||
                 editOption === "isTags" ||
                 editOption === "isMembers" ? 'visible' : 'hidden'}
+                ref={this.wrapperRef}
                 >
-{/*                <TaskEditWrapper>*/}
                     {editOption === "Edit" || editOption === "isCollection" ||
                         editOption === "isTags" ||
                         editOption === "isMembers" ?
@@ -420,7 +425,6 @@ class Tasks extends Component {
                         />
                         : null
                     }
-                {/*</TaskEditWrapper>*/}
                 </PosedTaskEditWrapper>
 
             </>

@@ -14,13 +14,13 @@ import DependentTasks from "./DependentTasks";
 import SideBarD from "./SideBarD";
 
 const DashboardWrapper = styled.div`
-  height: auto;
+  height: ${({height}) => height <=0 ? 'auto' : `${height+150}px`}
   min-height: calc(100vh - 70px);
   width: 100vw;
   display: flex;
   flex-direction: column;
   align-items: center;
-  background-color: silver;
+  background-color: ${({theme}) => theme.color.background};
   border-top-left-radius: 15px;
   border-top-right-radius: 15px;
   
@@ -35,6 +35,7 @@ class Dashboard extends Component {
         super(props);
         this.navBarRef = React.createRef();
         this.tasksRef = React.createRef();
+        this.wrapperRef = React.createRef();
 
         this.state = {
             user: {
@@ -50,7 +51,8 @@ class Dashboard extends Component {
             text: '',
             collections: [],
             tags: [],
-            isShared: false
+            isShared: false,
+            dashboardHeight: 0
         }
     }
 
@@ -88,7 +90,6 @@ class Dashboard extends Component {
                     } else {
                         // 403
                         // this.errorStatus = err.response.status;
-                        // displayNotification("Invalid username or password", "warning");
                         this.props.handleLogout();
                     }
 
@@ -147,7 +148,8 @@ class Dashboard extends Component {
     handleMenuClick = (prop) => {
         this.setState({
             menuOption: prop,
-            isShared: false
+            isShared: false,
+            dashboardHeight: 0
         });
     };
 
@@ -161,29 +163,38 @@ class Dashboard extends Component {
         this.setState({text: prop})
     };
 
-    closeAccount = () => {
-        //TODO do zmiany na desktop
-        this.setState({menuOption: 'All task'});
-    };
-
     componentDidMount() {
-        this.handleGetUser().then();
-        setTimeout(()=>{
-            this.handleGetCollectionTags("Collections").then();
-            this.handleGetCollectionTags("Tags").then()
-        },200);
+        this.handleGetUser().then( () => {
+                setTimeout(()=>{
+                    this.handleGetCollectionTags("Collections").then();
+                    this.handleGetCollectionTags("Tags").then()
+                },200)
+        }
+        );
 
     }
 
+    getDashboardHeight = () => {
+        return this.wrapperRef.current.clientHeight;
+    };
+
+    handleChangeHeight = (value) => {
+        this.setState({
+            dashboardHeight: value
+        })
+    };
+
     render() {
-        const {user, menuOption, text, showSideBar, collections, tags, isShared} = this.state;
+        const {user, menuOption, text, showSideBar, collections, tags, isShared, dashboardHeight} = this.state;
         const {loggedIn, handleLogout} = this.props;
 
         return (
             <>
+                <ReactNoticifaction/>
                 {loggedIn ?
                     <DashboardLayout>
-
+                        {user.id > 0 &&
+                        <>
                         <NavBar
                             displaySideBar={this.displaySideBar}
                             ref={this.navBarRef}
@@ -204,7 +215,7 @@ class Dashboard extends Component {
                             displayAccount={this.displayAccount}
                         />
 
-                        <DashboardWrapper>
+                        <DashboardWrapper height={dashboardHeight} ref={this.wrapperRef}>
                             {menuOption !== "Collections" &&
                                 menuOption !== "Tags" &&
                                 menuOption !== "Settings" &&
@@ -220,12 +231,13 @@ class Dashboard extends Component {
                                     tags={tags}
                                     isShared={isShared}
                                     handleChangeIsClick={this.handleChangeIsClick}
+                                    handleChangeHeight={this.handleChangeHeight}
+                                    getDashboardHeight={this.getDashboardHeight}
                                 />
                                 }
                             {menuOption === "Settings" &&
                                 <Account
                                     user={user}
-                                    closeAccount={this.closeAccount}
                                     handleLogout={handleLogout}
                                     handleGetUser={this.handleGetUser}
                                 />}
@@ -259,11 +271,6 @@ class Dashboard extends Component {
                                 handleLogout={handleLogout}
                                 menuOption={menuOption}
                                 text={text}
-                                // click={this.handleMenuClick}
-                                // collections={collections}
-                                // tags={tags}
-                                // isShared={isShared}
-                                // handleChangeIsClick={this.handleChangeIsClick}
                             />}
                         </DashboardWrapper>
 
@@ -276,6 +283,7 @@ class Dashboard extends Component {
                                 photo={user.photo}
                             />
                         }
+                        </>}
                     </DashboardLayout>
                     :
                     <Redirect to="/login" />

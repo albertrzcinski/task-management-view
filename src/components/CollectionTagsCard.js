@@ -193,7 +193,6 @@ class CollectionTagsCard extends Component {
                     }
                 })
             .then(() => {
-                //displayNotification("Collection changed.", "success");
                 this.props.reloadTasks();
             })
             .catch(err => {
@@ -215,7 +214,6 @@ class CollectionTagsCard extends Component {
                     }
                 })
             .then(() => {
-                //displayNotification("Tag added.", "success");
                 this.props.reloadTasks();
             })
             .catch(err => {
@@ -237,7 +235,6 @@ class CollectionTagsCard extends Component {
                     }
                 })
             .then(() => {
-                //displayNotification("Tag removed.", "danger");
                 this.props.reloadTasks();
             })
             .catch(err => {

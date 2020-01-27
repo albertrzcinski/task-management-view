@@ -64,7 +64,7 @@ const StyledMdSettingsBackupRestore = styled(MdSettingsBackupRestore)`
 
 const CardTitle = (props) => {
     const {id, handleComplete, handleDelete, tags, complete, title, trash, onClick, dependentTask} = props;
-    const date = new Date(props.dueDate).toDateString();
+    const date = new Date(props.creationDate).toDateString();
     return (
         <>
             <StyledWrapper>
