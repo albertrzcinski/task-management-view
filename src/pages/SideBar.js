@@ -181,10 +181,10 @@ class SideBar extends Component {
                       </PosedLI>
 
                       <PosedLI onClick={() => {
-                          click("Complete");
+                          click("Completed");
                           displaySideBar();
                       }}>
-                          Complete
+                          Completed
                       </PosedLI>
                   </UL>
 

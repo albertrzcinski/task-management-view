@@ -1,6 +1,7 @@
 import styled from "styled-components";
 import {Field} from "formik";
 import {Link} from "react-router-dom";
+import {FaStream} from "react-icons/fa"
 
 export const theme = {
     color: {
@@ -40,9 +41,21 @@ export const FormikField = styled(Field)`
   }
 `;
 
-export const Img = styled.img`
-  margin-top: 3em;
-  width: 30%;
+export const StyledFaStream = styled(FaStream)`
+  color: #029ed9;
+  margin-right: 10px;
+  text-shadow: 0 3px 3px rgba(255,255,255,0.5);
+`;
+
+export const Img = styled.h1`
+  font-family: "Myanmar Text",serif;
+  margin-top: 2em;
+  color: transparent;
+  background: #0274a8;
+  -webkit-background-clip: text;
+  -moz-background-clip: text;
+  background-clip: text;
+  text-shadow: 0px 3px 3px rgba(255,255,255,0.5);
 `;
 
 export const HR = styled.hr`

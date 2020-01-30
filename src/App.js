@@ -7,7 +7,6 @@ import {Route, Redirect, Switch} from "react-router"
 import axios from "axios";
 import {displayNotification, LOGIN_URL} from "./utils/utils";
 import Dashboard from "./pages/Dashboard";
-import ReactNoticifaction from "react-notifications-component";
 import Page404 from "./pages/Page404";
 
 class App extends Component{
@@ -58,7 +57,6 @@ class App extends Component{
   render() {
       return (
       <>
-          <ReactNoticifaction />
           <Router>
               <Switch>
                   <Route path="/signUp" component={SignUpPage}/>

@@ -1,10 +1,9 @@
 import React from "react";
 import {ErrorMessage, Form, Formik} from 'formik';
 import * as yup from 'yup';
-import {FormikField, HR, Img, P, StyledLink} from "../layout/theme";
+import {FormikField, HR, Img, P, StyledFaStream, StyledLink} from "../layout/theme";
 import Button from "../components/Button";
 import LoginLayout from "../layout/LoginLayout";
-import logo from "../logo.svg";
 import styled from "styled-components";
 import axios from "axios";
 import {CHANGE_EMAIL_PASS, displayNotification, RESET_PASS} from "../utils/utils";
@@ -105,7 +104,10 @@ const RecoveryPage = (props) => {
             <>
                 <ReactNoticifaction/>
                 <LoginLayout>
-                    <Img src={logo} alt="Logo"/>
+                    <Img>
+                        <StyledFaStream/>
+                        Task Manager
+                    </Img>
 
                     <P>
                         Reset your password
@@ -159,8 +161,12 @@ const RecoveryPage = (props) => {
     else {
         return (
             <>
+                <ReactNoticifaction/>
             <LoginLayout>
-                <Img src={logo} alt="Logo"/>
+                <Img>
+                    <StyledFaStream/>
+                    Task Manager
+                </Img>
 
                 <P>
                     Forgot password ?
@@ -196,7 +202,7 @@ const RecoveryPage = (props) => {
                 </Formik>
 
                 <HR/>
-
+                
                 <StyledLink to="/login">Return to log in</StyledLink>
             </LoginLayout>
             </>

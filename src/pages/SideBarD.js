@@ -86,9 +86,9 @@ class SideBarD extends Component {
                         </LI>
 
                         <LI onClick={() => {
-                            click("Complete");
+                            click("Completed");
                         }}>
-                            Complete
+                            Completed
                         </LI>
                     </UL>
 

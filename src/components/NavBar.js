@@ -195,9 +195,10 @@ class NavBar extends Component {
                     : null
                 }
 
-                {this.props.menuOption === "Complete" ||
+                {this.props.menuOption === "Completed" ||
                     this.props.menuOption === "Shared" ||
-                        this.props.menuOption === "Settings" ?
+                        this.props.menuOption === "Settings" ||
+                            this.props.menuOption === "Dependent tasks"?
                     <>
                     <CircleButton>
                     </CircleButton>

@@ -1,6 +1,5 @@
 import React, {Component} from "react";
-import {HR, Img, P, StyledLink} from "../layout/theme";
-import logo from "../logo.svg";
+import {HR, Img, P, StyledFaStream, StyledLink} from "../layout/theme";
 import LoginForm from "../components/LoginForm";
 import LoginLayout from "../layout/LoginLayout";
 import ReactNoticifaction from "react-notifications-component";
@@ -11,7 +10,9 @@ class SignUpPage extends Component {
             <>
                 <ReactNoticifaction />
                 <LoginLayout>
-                    <Img src={logo} alt="Logo"/>
+                    <Img>
+                        <StyledFaStream/>
+                        Task Manager </Img>
                     <P>
                         Sign up to Task Manager
                     </P>

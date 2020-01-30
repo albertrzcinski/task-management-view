@@ -1,12 +1,11 @@
 import React from "react";
-import {HR, Img, P, StyledLink} from "../layout/theme";
-import logo from "../logo.svg";
+import {HR, Img, P, StyledFaStream, StyledLink} from "../layout/theme";
 import LoginForm from "../components/LoginForm";
 import LoginLayout from "../layout/LoginLayout";
 import {Redirect} from "react-router";
 import ReactNoticifaction from 'react-notifications-component';
-import 'react-notifications-component/dist/theme.css'
-import 'animate.css'
+import 'react-notifications-component/dist/theme.css';
+import 'animate.css';
 
 const LoginPage = (props) => {
     return (
@@ -17,7 +16,10 @@ const LoginPage = (props) => {
                 <>
                     <ReactNoticifaction />
                 <LoginLayout>
-                    <Img src={logo} alt="Logo"/>
+                    <Img>
+                        <StyledFaStream/>
+                        Task Manager
+                    </Img>
                     <P>
                         Log in to Task Manager
                     </P>

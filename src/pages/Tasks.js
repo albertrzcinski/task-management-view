@@ -240,7 +240,7 @@ class Tasks extends Component {
                 })
             .then((res) => {
                 res.data ?
-                    displayNotification("Task has been moved to complete.", "success")
+                    displayNotification("Task has been moved to completed tasks.", "success")
                     :
                     displayNotification("Task has been restore to collection.", "success");
                 this.getTasks();
@@ -334,7 +334,7 @@ class Tasks extends Component {
                             .filter(task => task.title.toLowerCase().includes(text.toLowerCase()))
                             .map(
                                 (task) => (
-                                    menuOption === "Complete" ?
+                                    menuOption === "Completed" ?
                                         <TaskCard
                                             key={task.id}
                                             id={task.id}
@@ -454,7 +454,7 @@ class Tasks extends Component {
                     return (due.toLocaleDateString() === currentDate.toLocaleDateString())
                         && complete === false;
                 }
-                else if (menuOption === "Complete") {
+                else if (menuOption === "Completed") {
                     return complete === true;
                 }
             }
